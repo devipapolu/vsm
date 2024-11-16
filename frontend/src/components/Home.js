@@ -161,6 +161,8 @@ import "rsuite/dist/rsuite.min.css";
 import { Dropdown } from "rsuite";
 import Visitorprofile from "./Visitorprofile";
 
+import Header from "../components/Header";
+
 const Home = () => {
   const styles = {
     marginBottom: 10,
@@ -192,6 +194,7 @@ const Home = () => {
 
   return (
     <>
+      <Header />
       <div className="h-full w-full lg:px-28 md:px-2 sm:px-2 ">
         {/* Header Section */}
         <div className="mt-12 ">
