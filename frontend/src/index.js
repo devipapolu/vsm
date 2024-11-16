@@ -1,10 +1,14 @@
 import React from "react";
+import "rsuite/dist/rsuite.min.css";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import "antd/dist/reset.css";
 
 import reportWebVitals from "./reportWebVitals";
-import { RouterProvider } from "react-router-dom";
+import { Form, RouterProvider } from "react-router-dom";
 import router from "./routes";
+import "../node_modules/bootstrap/dist/css/bootstrap.css";
+import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 
