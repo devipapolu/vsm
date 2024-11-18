@@ -5,7 +5,7 @@ import "./index.css";
 import "antd/dist/reset.css";
 
 import reportWebVitals from "./reportWebVitals";
-import { Form, RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import router from "./routes";
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
 import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
@@ -15,8 +15,9 @@ import store from "./redux/store";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
+    {/* Wrap the entire app, including RouterProvider, with the Provider */}
     <Provider store={store}>
-      <RouterProvider router={router}></RouterProvider>
+      <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>
 );

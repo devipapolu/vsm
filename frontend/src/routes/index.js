@@ -4,36 +4,43 @@ import Home from "../components/Home";
 import Emloyeespage from "../pages/Emloyeespage";
 import Addvisitorpage from "../pages/Addvisitorpage";
 import Signin from "../pages/signinpage";
-import Main from "../components/Main";
 import Profilepage from "../pages/Profilepage";
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <App />,
+      children: [
+        {
+          path: "",
+          element: <Home />,
+        },
+        {
+          path: "employees",
+          element: <Emloyeespage />,
+        },
+        {
+          path: "addvisitor",
+          element: <Addvisitorpage />,
+        },
+        {
+          path: "signin",
+          element: <Signin />,
+        },
+        {
+          path: "profile",
+          element: <Profilepage />,
+        },
+      ],
+    },
+  ],
   {
-    path: "/",
-    element: <App />,
-    children: [
-      {
-        path: "",
-        element: <Home />,
-      },
-      {
-        path: "employees",
-        element: <Emloyeespage />,
-      },
-      {
-        path: "addvisitor",
-        element: <Addvisitorpage></Addvisitorpage>,
-      },
-      {
-        path: "signin",
-        element: <Signin />,
-      },
-      {
-        path: "profile",
-        element: <Profilepage />,
-      },
-    ],
-  },
-]);
+    future: {
+      v7_skipActionErrorRevalidation: true, // Your previous flag
+      v7_normalizeFormMethod: true, // New flag for form method normalization
+    },
+  }
+);
 
 export default router;
