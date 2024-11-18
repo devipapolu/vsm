@@ -5,8 +5,12 @@ import { Link, useLocation } from "react-router-dom";
 import { Drawer } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slice";
+import { useCookies } from "react-cookie";
 
 const Header = () => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation(); // Get the current route location
@@ -16,9 +20,22 @@ const Header = () => {
 
   const showDrawer = () => setOpen(true);
   const onCloseDrawer = () => setOpen(false);
+  const [cookies, setCookies, removieCookie] = useCookies();
 
   const handleToggle = () => {
     setIsOpen((prevState) => !prevState);
+  };
+
+  const handleLogout = () => {
+    removieCookie("token");
+    dispatch(
+      setUser({
+        _id: "",
+        name: "",
+        email: "",
+        token: "",
+      })
+    );
   };
 
   // Close profile dropdown when on the profile page
@@ -101,7 +118,10 @@ const Header = () => {
                   >
                     <Link to={"/profile"}>Profile</Link>
                   </div>
-                  <div className="cursor-pointer hover:bg-slate-300 px-2 py-1 rounded-md">
+                  <div
+                    className="cursor-pointer hover:bg-slate-300 px-2 py-1 rounded-md"
+                    onClick={handleLogout}
+                  >
                     Logout
                   </div>
                 </div>
