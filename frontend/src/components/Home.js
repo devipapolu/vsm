@@ -4,26 +4,57 @@ import SearchIcon from "@rsuite/icons/Search";
 import "rsuite/dist/rsuite.min.css";
 import { Dropdown } from "rsuite";
 import Visitorprofile from "./Visitorprofile";
-
 import Header from "../components/Header";
-import { useSelector } from "react-redux";
+import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../redux/slice";
 
 const Home = () => {
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   const user = useSelector((state) => state.user);
+  // Initialize cookies hook
+  const [cookies, setCookies] = useCookies(["token"]);
 
-  console.log("user", user);
+  // Log the cookies to debug
+  useEffect(() => {
+    console.log("Cookies:", cookies.token); // Check if token is available here
+  }, [cookies]);
 
-  const Checkuser = () => {
-    if (user._id === "") {
-      navigate("/signin");
-    }
-  };
+  if (!cookies.token) {
+    navigate("/signin");
+  }
 
   useEffect(() => {
-    Checkuser();
-  });
+    const GetUser = async () => {
+      const response = await axios.post("http://127.0.0.1:8090/api/getuser", {
+        token: cookies.token,
+      });
+
+      const getuserData = response.data;
+
+      if (getuserData.data.message === "Invalid token") {
+        alert("invalid token");
+      }
+
+      dispatch(setUser(getuserData.data));
+
+      console.log("userdata", getuserData);
+    };
+
+    GetUser();
+  }, []);
+
+  // Cookie check logic
+  useEffect(() => {
+    if (!cookies.token) {
+      navigate("/signin"); // Redirect if token is not found
+    }
+  }, [cookies, navigate]);
 
   const styles = {
     marginBottom: 10,
