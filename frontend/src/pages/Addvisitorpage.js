@@ -7,10 +7,10 @@ const Addvisitorpage = () => {
       <form className="   w-full flex flex-col lg:items-center md:items-center  gap-4">
         {/* Visitor fields */}
         <input
-          type="number"
-          name="empid"
+          type="text"
+          name="name"
           className="lg:w-1/3 sm:w-2.5 md:w-1/2 px-3 py-2 border rounded-md"
-          placeholder="Employee ID"
+          placeholder="Fullname"
           required
         />
         <input
