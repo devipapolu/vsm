@@ -8,6 +8,7 @@ const RegisterEmployee = require("../controller/regemployee");
 const GetEmployees = require("../controller/getemployees");
 const Employeesearchbyname = require("../controller/emplyeesearchbyname");
 const UserSignup = require("../controller/userController");
+const Addvisitor = require("../controller/addvisitor");
 
 const router = express.Router();
 
@@ -21,5 +22,8 @@ router.post("/regemployee", RegisterEmployee);
 router.get("/employees", GetEmployees);
 
 router.post("/searchemployee", Employeesearchbyname);
+
+//add visitor
+router.post("/addvisitor", Addvisitor);
 
 module.exports = router;
