@@ -1,29 +1,45 @@
-import React, { useEffect } from "react";
-import Header from "../components/Header";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useCookies } from "react-cookie";
+import React from "react";
 
 const Addvisitorpage = () => {
-  const navigate = useNavigate();
-
-  // Get user state from Redux
-  const user = useSelector((state) => state.user);
-
-  // Get cookies from the cookies hook
-  const [cookies] = useCookies(["token"]);
-
-  useEffect(() => {
-    // Check if the cookie exists and if the user is logged in
-    if (!cookies.token) {
-      navigate("/signin"); // Redirect to login page if no token or user is not authenticated
-    }
-  }, [cookies.token, user.name, navigate]); // Dependencies to rerun the effect when cookies or user state changes
-
   return (
-    <div style={{ height: "200vh" }} className="pt-28">
-      <Header />
-      <p>Addvisitorpage dfghjkl;</p>
+    <div>
+      {" "}
+      <form className="   w-full flex flex-col lg:items-center md:items-center  gap-4">
+        {/* Visitor fields */}
+        <input
+          type="number"
+          name="empid"
+          className="lg:w-1/3 sm:w-2.5 md:w-1/2 px-3 py-2 border rounded-md"
+          placeholder="Employee ID"
+          required
+        />
+        <input
+          type="text"
+          name="name"
+          className="lg:w-1/3 sm:w-full md:w-1/2  px-3 py-2 border rounded-md"
+          placeholder="Name"
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          className="lg:w-1/3 sm:w-full  md:w-1/2  px-3 py-2 border rounded-md"
+          placeholder="Email"
+          required
+        />
+        <input
+          type="text"
+          name="mobile"
+          className="lg:w-1/3 sm:w-full md:w-1/2  px-3 py-2 border rounded-md"
+          placeholder="Mobile"
+          required
+        />
+        <input
+          type="file"
+          name="profile"
+          className="lg:w-1/3 sm:w-full md:w-1/2  px-3 py-2 border rounded-md"
+        />
+      </form>
     </div>
   );
 };
