@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { ButtonToolbar, Input, InputGroup } from "rsuite";
+import React, { useEffect, useState } from "react";
+import { ButtonToolbar, Input, InputGroup, SelectPicker, VStack } from "rsuite";
 import SearchIcon from "@rsuite/icons/Search";
 import "rsuite/dist/rsuite.min.css";
 import { Dropdown } from "rsuite";
@@ -10,15 +10,19 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
+import { Select, Space } from "antd";
+const handleChange = (value) => {
+  console.log(`selected ${value}`);
+};
 
 const Home = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.user);
-  // Initialize cookies hook
   const [cookies, setCookies] = useCookies(["token"]);
+
+  const [searchtext, setSearchtext] = useState(null);
 
   // Log the cookies to debug
   useEffect(() => {
@@ -56,33 +60,37 @@ const Home = () => {
     }
   }, [cookies, navigate]);
 
-  const styles = {
-    marginBottom: 10,
-    height: 40,
-    width: 700,
+  const options = [
+    {
+      value: "jack",
+      label: "Jack",
+    },
+    {
+      value: "lucy",
+      label: "Lucy",
+    },
+    {
+      value: "Yiminghe",
+      label: "yiminghe",
+    },
+    {
+      value: "disabled",
+      label: "Disabled",
+      disabled: true,
+    },
+  ];
+
+  const handleQuerychange = async (value) => {
+    const response = await axios.post(
+      "http://127.0.0.1:8090/api/searchvisitorbyname",
+      {
+        query: value,
+      }
+    );
+
+    const responseData = response.data;
+    setSearchtext(responseData);
   };
-
-  const CustomDropdown = ({ ...props }) => (
-    <div className="w-full md:w-48">
-      <Dropdown {...props} className="bg-slate-100 w-full mb-2">
-        <Dropdown.Item className="bg-slate-200 p-2 w-full rounded">
-          <Input className="w-full" placeholder="Search Here" />
-        </Dropdown.Item>
-        <Dropdown.Item>Checked-IN</Dropdown.Item>
-        <Dropdown.Item>Pending...</Dropdown.Item>
-      </Dropdown>
-    </div>
-  );
-
-  const Purpose = ({ ...props }) => (
-    <Dropdown {...props} className="w-full md:w-48 bg-slate-100">
-      <Dropdown.Item>
-        <Input className="w-full" placeholder="Search Here" />
-      </Dropdown.Item>
-      <Dropdown.Item>Business</Dropdown.Item>
-      <Dropdown.Item>Personal</Dropdown.Item>
-    </Dropdown>
-  );
 
   return (
     <div className=" pt-28">
@@ -100,46 +108,48 @@ const Home = () => {
         </div>
 
         {/* Main Section for Search and Dropdowns */}
-        <div className="mt-4  flex  justify-between flex-col lg:flex-row gap-4 ">
-          {/* Search Input */}
-          <div className="w-full px-2  lg:hidden md:w-96">
-            <InputGroup className="" style={{ width: 350 }}>
-              <InputGroup.Addon className="bg-slate-100">
-                <SearchIcon />
-              </InputGroup.Addon>
-              <Input
-                className="bg-slate-100 w-full"
-                placeholder="Search visitors..."
-              />
-            </InputGroup>
-          </div>
 
-          <div className="w-full hidden lg:block md:w-96">
-            <InputGroup className="" style={{ width: 700 }}>
-              <InputGroup.Addon className="bg-slate-100">
-                <SearchIcon />
-              </InputGroup.Addon>
-              <Input
-                className="bg-slate-100 w-full"
-                placeholder="Search visitors..."
-              />
-            </InputGroup>
-          </div>
-
-          {/* Dropdown Section */}
-          <div className="flex flex-col  md:flex-row md:justify-around gap-4 px-2 md:w-96 ">
-            {/* Status Dropdown */}
-            <ButtonToolbar className="w-full md:w-48  ">
-              <CustomDropdown title="Status" trigger={["click", "hover"]} />
-            </ButtonToolbar>
-
-            {/* Purpose Dropdown */}
-            <ButtonToolbar className="w-full md:w-48 ">
-              <Purpose title="Purpose" trigger={["click", "hover"]} />
-            </ButtonToolbar>
+        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5">
+          {/* Search Input and Add Employee Button */}
+          <div className="flex flex-col md:flex-row lg:flex-row  gap-2 w-full mt-16 lg:mt-10">
+            {/* Search Input */}
+            <div className="lg:w-4/6 md:w-4/6 sm:w-full px-2 ">
+              <InputGroup style={{ width: "100%", height: 40 }}>
+                <InputGroup.Addon className="bg-slate-100">
+                  <SearchIcon />
+                </InputGroup.Addon>
+                <Input
+                  className="bg-slate-100 w-full focus:outline-none"
+                  placeholder="Search Visitors..."
+                  // value={searchQuery} // Bind the input to searchQuery state
+                  onChange={handleQuerychange} // Handle change
+                />
+              </InputGroup>
+            </div>
+            <div className=" flex lg:flex-row md:flex-row flex-col gap-2 md:w-2/6  lg:w-2/6  px-2">
+              <div className=" w-full">
+                <Select
+                  defaultValue="lucy"
+                  className="w-full h-10 "
+                  onChange={handleChange}
+                  variant="filled"
+                  options={options}
+                />
+              </div>
+              <div className=" w-full">
+                <Select
+                  defaultValue="lucy"
+                  className="w-full h-10"
+                  onChange={handleChange}
+                  variant="filled"
+                  options={options}
+                />
+              </div>
+            </div>
           </div>
         </div>
-        <Visitorprofile />
+
+        <Visitorprofile visitorssearchlist={searchtext} />
       </div>
     </div>
   );

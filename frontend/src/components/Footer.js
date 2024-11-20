@@ -5,3 +5,8 @@ const Footer = () => {
 };
 
 export default Footer;
+
+{
+  /* Employee List */
+}
+

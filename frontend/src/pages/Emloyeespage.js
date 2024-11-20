@@ -153,10 +153,10 @@ const Emloyeespage = () => {
             </div>
 
             {/* Add Employee Button (unchanged code) */}
-            <div className="lg:w-1/6 md:w-1/5 sm:w-full flex justify-start lg:mt-0 lg:block sm:hidden md:block hidden ">
+            <div className="  lg:w-1/6 md:w-1/5 sm:w-full flex justify-end lg:mt-0 lg:block sm:hidden md:block hidden ">
               <button
                 onClick={handleOpen}
-                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                className="bg-blue-500 text-white py-2 px-4 w-full rounded-md hover:bg-blue-600"
                 style={{ marginTop: 0, height: 38 }}
               >
                 Add Employee
@@ -239,7 +239,43 @@ const Emloyeespage = () => {
         </Modal>
 
         {/* Employee List */}
-        <div>
+
+        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {employees?.length > 0 ? (
+            employees.map((employee) => (
+              <div
+                key={employee._id}
+                className="bg-white rounded-lg border overflow-hidden transform transition-all duration-300
+                
+                  hover:shadow-xl"
+              >
+                <div className="relative h-44  border-b-2 p-1">
+                  <img
+                    alt="profile"
+                    src={employee.profile}
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                </div>
+                <div className="px-2 pt-1 text-start">
+                  <h3 className="text-xl font-semibold text-gray-800 truncate">
+                    {employee.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-2">{employee.email}</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {employee.mobile}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">{employee.empid}</p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="w-full text-center text-lg text-gray-500 p-4">
+              No employees found.
+            </div>
+          )}
+        </div>
+
+        {/* <div>
           {employees?.length > 0 ? (
             employees.map((employee) => (
               <div key={employee._id}>
@@ -253,7 +289,7 @@ const Emloyeespage = () => {
           ) : (
             <div>No employees found.</div> // Message when no employees are found
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );
