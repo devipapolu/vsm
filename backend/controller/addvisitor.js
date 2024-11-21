@@ -25,6 +25,8 @@ async function Addvisitor(req, res) {
   ) {
     return res.status(204).json({
       message: "All fields are required",
+      success: false,
+      error: true,
     });
   }
 

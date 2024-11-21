@@ -7,27 +7,27 @@ function Visitorprofile({ visitorssearchlist }) {
   const [visitors, setVisitors] = useState(null);
   const [data, setData] = useState(null);
 
-  const Getvisitors = async () => {
-    await axios
-      .get("http://127.0.0.1:8090/api/getvisitors")
-      .then((response) => {
-        if (visitorssearchlist === null) {
-          setVisitors(response.data);
-        }
-      });
-  };
+  // const Getvisitors = async () => {
+  //   await axios
+  //     .get("http://127.0.0.1:8090/api/getvisitors")
+  //     .then((response) => {
+  //       if (visitorssearchlist === null) {
+  //         setVisitors(response.data);
+  //       }
+  //     });
+  // };
 
-  useEffect(() => {
-    if (visitorssearchlist) {
-      setVisitors(visitorssearchlist); // If search data is provided, use it directly
-    } else {
-      Getvisitors(); // Fetch visitors from the API if no search is active
-    }
-  }, [visitorssearchlist]);
+  // useEffect(() => {
+  //   if (visitorssearchlist) {
+  //     setVisitors(visitorssearchlist); // If search data is provided, use it directly
+  //   } else {
+  //     Getvisitors(); // Fetch visitors from the API if no search is active
+  //   }
+  // }, [visitorssearchlist]);
 
-  useEffect(() => {
-    Getvisitors();
-  }, []);
+  // useEffect(() => {
+  //   Getvisitors();
+  // }, []);
 
   console.log("visitors", visitors);
 

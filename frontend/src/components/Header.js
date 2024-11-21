@@ -225,23 +225,7 @@ const Header = () => {
           <Modal.Body>
             <Addvisitorpage handleClose={handleClose} />
           </Modal.Body>
-          <Modal.Footer
-            className=" d-flex  justify-center"
-            style={{ marginLeft: "-14px  " }}
-          >
-            {/* <div className=" d-flex w-1/2  text-center">
-              <Button
-                onClick={handleClose}
-                className="w-full"
-                appearance="dark"
-              >
-                Cancel
-              </Button>
-              <Button type="submit" className="w-full" appearance="primary">
-                Save
-              </Button>
-            </div> */}
-          </Modal.Footer>
+          <Modal.Footer></Modal.Footer>
         </Modal>
 
         {/* CSS for Active Link Styling */}

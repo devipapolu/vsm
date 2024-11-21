@@ -1,69 +1,104 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Button, SelectPicker, VStack } from "rsuite";
+import { Button, Select } from "antd";
 import axios from "axios";
-import Webcam from "react-webcam";
+import React, { useState, useRef, useEffect } from "react";
+import Webcam from "react-webcam"; // Import react-webcam
 
 const AddVisitorPage = ({ handleClose }) => {
-  const [data, setData] = useState(null);
-  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [employees, setEmployees] = useState([]);
+  const [selectedPerson, setSelectedPerson] = useState(null);
   const [photo, setPhoto] = useState(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
   const webcamRef = useRef(null);
 
   const [formdata, setFormdata] = useState({
     name: "",
     mobile: "",
     address: "",
-    visitingperson: "",
     visitingpurpose: "",
+    visitingperson: "",
     photo: "",
   });
 
-  const GetEmployees = async () => {
-    await axios.get("http://127.0.0.1:8090/api/employees").then((response) => {
-      setData(response.data);
-    });
+  const handleTakePhoto = () => {
+    setIsCameraActive(true);
   };
 
+  // Function to capture the photo from the webcam
+  const handleCapture = () => {
+    if (webcamRef.current) {
+      const imageData = webcamRef.current.getScreenshot(); // Capture image from webcam
+      setPhoto(imageData); // Store the captured image in the state
+      setFormdata((preve) => ({
+        ...preve,
+        photo: imageData,
+      }));
+    }
+  };
+
+  //selectlist
+  const handlePersonChange = (value) => {
+    setFormdata((preve) => ({
+      ...preve,
+      visitingperson: value,
+    }));
+  };
+  const handlevisitingreason = (value) => {
+    setFormdata((preve) => ({
+      ...preve,
+      visitingpurpose: value,
+    }));
+  };
+
+  // Fetch employees from API
+  const GetEmployees = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8090/api/employees");
+      setEmployees(response.data); // Assuming response.data is an array of employees
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+    }
+  };
+
+  // Run GetEmployees once on component mount
   useEffect(() => {
     GetEmployees();
   }, []);
 
-  const purposeofvisit = ["Business", "Personal", "Interview"].map((item) => ({
-    label: item,
-    value: item,
+  // Map employees to options for the Select component
+  const employeeOptions = employees.map((employee) => ({
+    value: employee.name, // Assuming each employee has an 'id'
+    label: employee.name, // Assuming each employee has a 'name'
   }));
 
-  const person = data?.map((item) => ({ label: item.name, value: item.name }));
+  const purposevisitoptions = [
+    {
+      value: "Business",
+      label: "Business",
+    },
+    {
+      value: "Personal",
+      label: "Personal",
+    },
+    // {
+    //   value: "Interview",
+    //   label: "Interview",
+    // },
+  ];
 
-  // Handle the "Take Photo" button click
-  const startCamera = () => {
-    setIsCameraActive(true); // Activate the camera
-  };
-
-  // Capture the photo
-  const capturePhoto = () => {
-    const imageSrc = webcamRef.current.getScreenshot(); // Capture the screenshot
-    setPhoto(imageSrc); // Store the photo
-    setFormdata((preve) => ({
-      ...preve,
-      photo: imageSrc,
-    }));
-  };
-
-  // Handle select changes (for the form fields)
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormdata((preve) => {
-      return {
-        ...preve,
-        [name]: value,
-      };
-    });
+    setFormdata((preve) => ({
+      ...preve,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = async (e) => {
+  console.log("formdata", formdata);
+
+  const handleAddvisitor = async (e) => {
     e.preventDefault();
+
     const response = await axios.post(
       "http://127.0.0.1:8090/api/addvisitor",
       formdata
@@ -72,163 +107,155 @@ const AddVisitorPage = ({ handleClose }) => {
     const responseData = response.data;
 
     if (responseData.success) {
-      handleClose();
       alert("visitor added successfully");
+      handleClose();
+      setFormdata({
+        name: "",
+        mobile: "",
+        address: "",
+        visitingpurpose: "",
+        visitingperson: "",
+        photo: "",
+      });
+      window.location.reload();
     }
 
-    console.log("form", formdata);
-  };
-
-  const handleVisitingperson = (value) => {
-    setFormdata((preve) => ({
-      ...preve,
-      visitingperson: value,
-    }));
-  };
-
-  const handlepurposeofvisit = (value) => {
-    setFormdata((preve) => ({
-      ...preve,
-      visitingpurpose: value,
-    }));
+    if (responseData.error) {
+      alert("all fields are required");
+    }
   };
 
   return (
-    <div className="flex justify-center">
-      <form onSubmit={handleSubmit} className="md:w-2/3 lg:w-1/2 w-full">
-        <dl>
-          {/* Fullname field */}
-          <dt className="font-semibold" style={{ fontSize: 13 }}>
-            Fullname:
-          </dt>
-          <dd>
-            <input
-              onChange={handleChange}
-              type="text"
-              name="name"
-              className="lg:w-full w-full px-2 py-2 border rounded-md outline-none"
-              placeholder="Fullname"
-              required
-            />
-          </dd>
+    <div>
+      <form
+        onSubmit={handleAddvisitor}
+        className="flex flex-col gap-4 lg:w-1/2 m-auto"
+      >
+        {/* Form Inputs */}
+        <div>
+          <label className="font-semibold">Fullname:</label>
+          <input
+            type="text"
+            name="name"
+            className="form-control"
+            placeholder="Enter Fullname"
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          {/* Mobile field */}
-          <dt className="font-semibold mt-4" style={{ fontSize: 13 }}>
-            Mobile:
-          </dt>
-          <dd>
-            <input
-              onChange={handleChange}
-              type="text"
-              name="mobile"
-              className="lg:w-full w-full px-2 py-2 border rounded-md outline-none"
-              placeholder="Mobile"
-              required
-            />
-          </dd>
+        <div>
+          <label className="font-semibold">Mobile:</label>
+          <input
+            type="text"
+            name="mobile"
+            className="form-control"
+            placeholder="Enter Mobile"
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          {/* Address field */}
-          <dt className="font-semibold mt-4" style={{ fontSize: 13 }}>
-            Address:
-          </dt>
-          <dd>
-            <input
-              onChange={handleChange}
-              type="text"
-              name="address"
-              className="lg:w-full w-full px-2 py-2 border rounded-md outline-none"
-              placeholder="Address"
-              required
-            />
-          </dd>
+        <div>
+          <label className="font-semibold">Address:</label>
+          <input
+            type="text"
+            name="address"
+            className="form-control"
+            placeholder="Enter Address"
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          {/* Visiting person dropdown */}
-          <dt className="font-semibold mt-4" style={{ fontSize: 13 }}>
-            Visiting:
-          </dt>
-          <dd>
-            <VStack>
-              <SelectPicker
-                menuMaxHeight={180}
-                data={person}
-                className="w-full"
-                onChange={handleVisitingperson}
-                placeholder="Select visiting person"
-                required
+        <div>
+          <label className="font-semibold">Visiting:</label>
+          <Select
+            className="w-full h-10"
+            showSearch
+            listHeight={200}
+            onChange={handlePersonChange}
+            placeholder="Select visiting person"
+            optionFilterProp="label"
+            filterSort={(optionA, optionB) =>
+              (optionA?.label ?? "")
+                .toLowerCase()
+                .localeCompare((optionB?.label ?? "").toLowerCase())
+            }
+            options={employeeOptions}
+          />
+        </div>
+
+        <div>
+          <label className="font-semibold">Purpose of visit:</label>
+          <Select
+            className="w-full h-10"
+            // showSearch
+            listHeight={200}
+            onChange={handlevisitingreason}
+            placeholder="Select Purpose"
+            optionFilterProp="label"
+            filterSort={(optionA, optionB) =>
+              (optionA?.label ?? "")
+                .toLowerCase()
+                .localeCompare((optionB?.label ?? "").toLowerCase())
+            }
+            options={purposevisitoptions}
+          />
+        </div>
+
+        {/* Take Photo Button */}
+        <div className=" flex flex-col ">
+          <label className="font-semibold">Photo:</label>
+
+          {!isCameraActive ? (
+            <button
+              type="button"
+              className=" btn btn-secondary w-1/3"
+              onClick={handleTakePhoto}
+            >
+              Take Photo
+            </button>
+          ) : (
+            <div>
+              {/* Webcam */}
+              <Webcam
+                audio={false}
+                screenshotFormat="image/jpeg"
+                width="100%"
+                videoConstraints={{
+                  facingMode: "environment", // Front camera
+                }}
+                ref={webcamRef} // Attach ref to the webcam
               />
-            </VStack>
-          </dd>
 
-          {/* Purpose of visit dropdown */}
-          <dt className="font-semibold mt-4" style={{ fontSize: 13 }}>
-            Purpose of visit:
-          </dt>
-          <dd>
-            <VStack>
-              <SelectPicker
-                searchable={false}
-                data={purposeofvisit}
-                className="w-full outline-none"
-                placeholder="Select purpose"
-                onChange={handlepurposeofvisit}
-              />
-            </VStack>
-          </dd>
-
-          {/* Photo Section */}
-          <dt className="font-semibold mt-4" style={{ fontSize: 13 }}>
-            Photo:
-          </dt>
-          <dd>
-            {!isCameraActive ? (
+              {/* Capture Button */}
               <button
                 type="button"
-                onClick={startCamera}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                className="btn btn-success mt-2"
+                onClick={handleCapture}
               >
-                Take Photo
+                Capture Photo
               </button>
-            ) : (
-              <div className="camera-container">
-                <Webcam
-                  audio={false}
-                  ref={webcamRef}
-                  screenshotFormat="image/jpeg"
-                  width="100%"
-                  videoConstraints={{
-                    facingMode: "user", // Use the front-facing camera
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={capturePhoto}
-                  className="mt-4 bg-green-500 text-white px-4 py-2 rounded-md"
-                >
-                  Capture Photo
-                </button>
-              </div>
-            )}
-          </dd>
-
-          {/* Display the captured photo */}
-          {photo && (
-            <div className="mt-4">
-              <h3>Captured Photo:</h3>
-              <img
-                src={photo}
-                alt="Captured"
-                style={{ width: "100%", borderRadius: "8px" }}
-              />
             </div>
           )}
-        </dl>
-        <div className=" d-flex w-full gap-3  text-center">
-          <Button onClick={handleClose} className="w-full" appearance="dark">
-            Cancel
-          </Button>
-          <Button type="submit" className="w-full" appearance="primary">
-            Save
-          </Button>
+        </div>
+
+        {/* Display Captured Photo */}
+        {photo && (
+          <div className="mt-4">
+            <h3>Captured Photo:</h3>
+            <img src={photo} alt="Captured" className="w-full" />
+          </div>
+        )}
+
+        <div className=" w-full flex flex-row gap-4">
+          <div className=" btn btn-light w-full" onClick={handleClose}>
+            cancel
+          </div>
+          <button type="submit" className=" btn btn-primary w-full ">
+            Add Visitor
+          </button>
         </div>
       </form>
     </div>
