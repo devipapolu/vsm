@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Visitorschema = mongoose.Schema(
   {
     name: String,
-    Mobile: Number,
+    mobile: String,
     address: String,
     visitingpurpose: String,
     visitingperson: String,
