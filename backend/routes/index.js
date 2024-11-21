@@ -10,6 +10,8 @@ const Employeesearchbyname = require("../controller/emplyeesearchbyname");
 const UserSignup = require("../controller/userController");
 const Addvisitor = require("../controller/addvisitor");
 const Getvisitors = require("../controller/getvisitors");
+const Updatecheckin = require("../controller/updatecheckin");
+const Updatecheckout = require("../controller/updatecheckout");
 
 const router = express.Router();
 
@@ -29,5 +31,11 @@ router.post("/addvisitor", Addvisitor);
 
 //get visitors
 router.get("/getvisitors", Getvisitors);
+
+//update checkin
+router.put("/chekin/:id", Updatecheckin);
+
+//update checkout
+router.put("/checkout/:id", Updatecheckout);
 
 module.exports = router;
