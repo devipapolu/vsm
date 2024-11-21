@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { ButtonToolbar, Input, InputGroup } from "rsuite";
 import SearchIcon from "@rsuite/icons/Search";
 import "rsuite/dist/rsuite.min.css";
@@ -10,26 +10,27 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
+import { Select } from "antd";
+import Allvisitorspage from "./allvisitorspage";
 
 const Home = () => {
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
-
   const user = useSelector((state) => state.user);
-  // Initialize cookies hook
+  const [onChangepurpose, setOnChangepurpose] = useState("");
   const [cookies, setCookies] = useCookies(["token"]);
-
-  // Log the cookies to debug
-  useEffect(() => {
-    console.log("Cookies:", cookies.token); // Check if token is available here
-  }, [cookies]);
-
-  if (!cookies.token) {
-    navigate("/signin");
-  }
+  const [latestpersons, setLatestpersons] = useState(null);
+  const [searchTerm, setSearchitem] = useState("");
+  const [visitors, setVisitors] = useState(null);
 
   useEffect(() => {
+    // If no token, redirect to signin
+    if (!cookies.token) {
+      navigate("/signin");
+      return; // Early return if token doesn't exist
+    }
+
+    // Fetch user data using token
     const GetUser = async () => {
       const response = await axios.post("http://127.0.0.1:8090/api/getuser", {
         token: cookies.token,
@@ -38,109 +39,204 @@ const Home = () => {
       const getuserData = response.data;
 
       if (getuserData.data.message === "Invalid token") {
-        alert("invalid token");
+        alert("Invalid token");
+        navigate("/signin");
       }
 
       dispatch(setUser(getuserData.data));
-
       console.log("userdata", getuserData);
     };
 
     GetUser();
-  }, []);
+  }, [cookies.token, navigate, dispatch]);
 
-  // Cookie check logic
-  useEffect(() => {
-    if (!cookies.token) {
-      navigate("/signin"); // Redirect if token is not found
-    }
-  }, [cookies, navigate]);
-
-  const styles = {
-    marginBottom: 10,
-    height: 40,
-    width: 700,
+  const getvisitors = async () => {
+    await axios
+      .get("http://127.0.0.1:8090/api/getvisitors")
+      .then((response) => {
+        setVisitors(response.data);
+      });
   };
 
-  const CustomDropdown = ({ ...props }) => (
-    <div className="w-full md:w-48">
-      <Dropdown {...props} className="bg-slate-100 w-full mb-2">
-        <Dropdown.Item className="bg-slate-200 p-2 w-full rounded">
-          <Input className="w-full" placeholder="Search Here" />
-        </Dropdown.Item>
-        <Dropdown.Item>Checked-IN</Dropdown.Item>
-        <Dropdown.Item>Pending...</Dropdown.Item>
-      </Dropdown>
-    </div>
+  useEffect(() => {
+    getvisitors();
+  }, []);
+
+  // Filter pending users that haven't checked in or out
+  const pendingusers = visitors?.filter(
+    (pvisitor) => !pvisitor.checkin || !pvisitor.checkout
   );
 
-  const Purpose = ({ ...props }) => (
-    <Dropdown {...props} className="w-full md:w-48 bg-slate-100">
-      <Dropdown.Item>
-        <Input className="w-full" placeholder="Search Here" />
-      </Dropdown.Item>
-      <Dropdown.Item>Business</Dropdown.Item>
-      <Dropdown.Item>Personal</Dropdown.Item>
-    </Dropdown>
-  );
+  // Memoize the filtered search results to optimize performance
+  const filteredVisitors = useMemo(() => {
+    let filtered = pendingusers;
+
+    // Filter by search term
+    if (searchTerm !== "") {
+      filtered = filtered.filter((person) =>
+        person.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filter by purpose (Business/Personal)
+    if (onChangepurpose) {
+      filtered = filtered.filter(
+        (person) => person.visitingpurpose === onChangepurpose
+      );
+    }
+
+    return filtered;
+  }, [searchTerm, pendingusers, onChangepurpose]);
+
+  useEffect(() => {
+    setLatestpersons(filteredVisitors);
+  }, [filteredVisitors]);
+
+  // Handle search term change
+  const handleQuerychange = (value) => {
+    setSearchitem(value);
+  };
+
+  // Dropdown onChange handler
+  const onChangepurposeHandler = (value) => {
+    setOnChangepurpose(value);
+  };
+
+  const options = [
+    { value: "checkedin", label: "Checkedin" },
+    { value: "checkedout", label: "Checkedout" },
+  ];
+
+  const visitingpurposeoptions = [
+    { value: "Personal", label: "Personal" },
+    { value: "Business", label: "Business" },
+  ];
+
+  console.log("latest", latestpersons);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12; // Convert to 12-hour format
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes; // Add leading zero if minutes are < 10
+
+    const formattedDate = `${date.toLocaleDateString()} ${formattedHours}:${formattedMinutes} ${ampm}`;
+
+    return formattedDate;
+  };
 
   return (
-    <div className=" pt-28">
+    <div className="pt-28 ">
       <Header />
-      <div
-        className="h-full w-full lg:px-28 md:px-2 sm:px-2 "
-        style={{ height: "200vh" }}
-      >
+      <div className="h-full w-full lg:px-28 md:px-2 sm:px-2 mb-16" style={{}}>
         {/* Header Section */}
-        <div className=" ">
+        <div className="px-2">
           <h1 className="font-bold text-2xl">Visitors</h1>
           <p className="text-gray-500">
             All the visitors that are currently on the premises
           </p>
         </div>
 
-        {/* Main Section for Search and Dropdowns */}
-        <div className="mt-4  flex  justify-between flex-col lg:flex-row gap-4 ">
-          {/* Search Input */}
-          <div className="w-full px-2  lg:hidden md:w-96">
-            <InputGroup className="" style={{ width: 350 }}>
-              <InputGroup.Addon className="bg-slate-100">
-                <SearchIcon />
-              </InputGroup.Addon>
-              <Input
-                className="bg-slate-100 w-full"
-                placeholder="Search visitors..."
-              />
-            </InputGroup>
-          </div>
+        {/* Search Input */}
+        <div className="lg:flex lg:flex-row lg:items-center px-2 lg:justify-between w-full mt-5">
+          {/* Search Input and Add Employee Button */}
+          <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-1 gap-2">
+            {/* Search Input */}
+            <div className="lg:w-4/5 md:w-4/6 sm:w-full ">
+              <InputGroup style={{ width: "100%", height: 40 }}>
+                <InputGroup.Addon className="bg-slate-100">
+                  <SearchIcon />
+                </InputGroup.Addon>
+                <Input
+                  className="bg-slate-100 w-full focus:outline-none"
+                  placeholder="Search Visitors..."
+                  onChange={handleQuerychange}
+                />
+              </InputGroup>
+            </div>
 
-          <div className="w-full hidden lg:block md:w-96">
-            <InputGroup className="" style={{ width: 700 }}>
-              <InputGroup.Addon className="bg-slate-100">
-                <SearchIcon />
-              </InputGroup.Addon>
-              <Input
-                className="bg-slate-100 w-full"
-                placeholder="Search visitors..."
-              />
-            </InputGroup>
-          </div>
-
-          {/* Dropdown Section */}
-          <div className="flex flex-col  md:flex-row md:justify-around gap-4 px-2 md:w-96 ">
-            {/* Status Dropdown */}
-            <ButtonToolbar className="w-full md:w-48  ">
-              <CustomDropdown title="Status" trigger={["click", "hover"]} />
-            </ButtonToolbar>
-
-            {/* Purpose Dropdown */}
-            <ButtonToolbar className="w-full md:w-48 ">
-              <Purpose title="Purpose" trigger={["click", "hover"]} />
-            </ButtonToolbar>
+            {/* Select Buttons */}
+            <div className="flex flex-col  justify-between md:w-1/6 gap-2 md:flex-row lg:flex-row lg:w-1/5 md:pr-1 ">
+              {/* <div className="w-full">
+                <Select
+                  placeholder="Status"
+                  optionFilterProp="label"
+                  onChange={(value) => console.log(value)}
+                  options={options}
+                  className="h-10 w-full"
+                />
+              </div> */}
+              <div className="w-full">
+                <Select
+                  placeholder="Purpose"
+                  optionFilterProp="label"
+                  onChange={onChangepurposeHandler}
+                  options={visitingpurposeoptions}
+                  className="h-10 w-full"
+                />
+              </div>
+            </div>
           </div>
         </div>
-        <Visitorprofile />
+
+        {/* Visitors profile */}
+        <div className="px-2">
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+            {latestpersons?.length > 0 ? (
+              latestpersons.map((employee) => (
+                <div
+                  key={employee._id}
+                  className="bg-white rounded-lg border overflow-hidden transform transition-all duration-300 hover:shadow-xl"
+                >
+                  <div className="relative h-44 border-b-2 p-4">
+                    <img
+                      alt="profile"
+                      src={employee.photo}
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                  </div>
+                  <div className="px-2 pt-1 text-start">
+                    <h3 className="text-xl font-semibold text-gray-800 truncate">
+                      {employee.name}
+                    </h3>
+                    <div className="text-sm text-gray-600 mt-3">Visiting</div>
+                    <div className="text-md text-gray-900 ">
+                      {employee.visitingperson}
+                    </div>
+                    <div className="text-sm text-gray-600 mt-3">
+                      Purpose of visit
+                    </div>
+                    <div className="text-md text-gray-900 ">
+                      {employee.visitingpurpose}
+                    </div>
+
+                    <div className="text-sm text-gray-600 mt-3">
+                      Created time
+                    </div>
+                    <div className="text-md text-gray-900 ">
+                      {formatDate(employee.createdAt)}
+                    </div>
+
+                    {!employee.checkin && !employee.checkout && (
+                      <div className=" mt-3">Checked in false</div>
+                    )}
+                    {!employee.checkout && <div>checkedout false</div>}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="w-full text-center text-lg text-gray-500 p-2">
+                No employees found.
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+      <hr className="" />
+      <Allvisitorspage />
     </div>
   );
 };
