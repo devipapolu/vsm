@@ -128,6 +128,20 @@ const Home = () => {
     return formattedDate;
   };
 
+  //checkin and checkout buttons
+
+  const handleCheckin = async (value) => {
+    await axios.put(`http://127.0.0.1:8090/api/chekin/${value}`);
+    alert("successfully checkedin");
+    window.location.reload();
+  };
+
+  const handleCheckout = async (value) => {
+    await axios.put(`http://127.0.0.1:8090/api/checkout/${value}`);
+    alert("successfully checked out");
+    window.location.reload();
+  };
+
   return (
     <div className="pt-28 ">
       <Header />
@@ -186,47 +200,61 @@ const Home = () => {
         <div className="px-2">
           <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
             {latestpersons?.length > 0 ? (
-              latestpersons.map((employee) => (
-                <div
-                  key={employee._id}
-                  className="bg-white rounded-lg border overflow-hidden transform transition-all duration-300 hover:shadow-xl"
-                >
-                  <div className="relative h-44 border-b-2 p-4">
-                    <img
-                      alt="profile"
-                      src={employee.photo}
-                      className="w-full h-full object-cover rounded-md"
-                    />
-                  </div>
-                  <div className="px-2 pt-1 text-start">
-                    <h3 className="text-xl font-semibold text-gray-800 truncate">
-                      {employee.name}
-                    </h3>
-                    <div className="text-sm text-gray-600 mt-3">Visiting</div>
-                    <div className="text-md text-gray-900 ">
-                      {employee.visitingperson}
+              latestpersons
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort by createdAt, descending
+                .map((employee) => (
+                  <div
+                    key={employee._id}
+                    className="bg-white rounded-lg pb-3 border overflow-hidden transform transition-all duration-300 hover:shadow-xl"
+                  >
+                    <div className="relative h-44 border-b-2 p-4">
+                      <img
+                        alt="profile"
+                        src={employee.photo}
+                        className="w-full h-full object-cover rounded-md"
+                      />
                     </div>
-                    <div className="text-sm text-gray-600 mt-3">
-                      Purpose of visit
-                    </div>
-                    <div className="text-md text-gray-900 ">
-                      {employee.visitingpurpose}
-                    </div>
+                    <div className="px-2 pt-1 text-start">
+                      <h3 className="text-xl font-semibold text-gray-800 truncate">
+                        {employee.name}
+                      </h3>
+                      <div className="text-sm text-gray-600 mt-3">Visiting</div>
+                      <div className="text-md text-gray-900">
+                        {employee.visitingperson}
+                      </div>
+                      <div className="text-sm text-gray-600 mt-3">
+                        Purpose of visit
+                      </div>
+                      <div className="text-md text-gray-900">
+                        {employee.visitingpurpose}
+                      </div>
 
-                    <div className="text-sm text-gray-600 mt-3">
-                      Created time
-                    </div>
-                    <div className="text-md text-gray-900 ">
-                      {formatDate(employee.createdAt)}
-                    </div>
+                      <div className="text-sm text-gray-600 mt-3">
+                        Created time
+                      </div>
+                      <div className="text-md text-gray-900">
+                        {formatDate(employee.createdAt)}
+                      </div>
 
-                    {!employee.checkin && !employee.checkout && (
-                      <div className=" mt-3">Checked in false</div>
-                    )}
-                    {!employee.checkout && <div>checkedout false</div>}
+                      {!employee.checkin && (
+                        <div
+                          className="mt-3 btn btn-success"
+                          onClick={() => handleCheckin(employee._id)}
+                        >
+                          Check in
+                        </div>
+                      )}
+                      {!employee.checkout && employee.checkin && (
+                        <div
+                          className="mt-3 btn btn-danger"
+                          onClick={() => handleCheckout(employee._id)}
+                        >
+                          Check out
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))
+                ))
             ) : (
               <div className="w-full text-center text-lg text-gray-500 p-2">
                 No employees found.
