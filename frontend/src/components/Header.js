@@ -223,16 +223,9 @@ const Header = () => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Addvisitorpage />
+            <Addvisitorpage handleClose={handleClose} />
           </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={handleClose} appearance="subtle">
-              Cancel
-            </Button>
-            <Button type="submit" appearance="primary">
-              Save
-            </Button>
-          </Modal.Footer>
+          <Modal.Footer></Modal.Footer>
         </Modal>
 
         {/* CSS for Active Link Styling */}

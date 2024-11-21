@@ -25,6 +25,8 @@ async function Addvisitor(req, res) {
   ) {
     return res.status(400).json({
       message: "All fields are required",
+      success: false,
+      error: true,
     });
   }
 
@@ -50,6 +52,8 @@ async function Addvisitor(req, res) {
     return res.status(201).json({
       message: "Visitor added successfully",
       visitor: savevisitor,
+      success: true,
+      error: false,
     });
   } catch (error) {
     // Catch and handle any errors
