@@ -6,15 +6,12 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
-import { useFormik } from "formik";
-import * as Yup from "yup"; 
-
 
 const Emloyeespage = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const [cookies] = useCookies(["token"]);
-  const navigatedetailspage=useNavigate() 
+  const navigatedetailspage = useNavigate();
 
   // Redirect to signin if token is missing or user is not logged in
   useEffect(() => {
@@ -34,34 +31,7 @@ const Emloyeespage = () => {
     mobile: "",
     empid: "",
     profile: "",
-  });
-
-
-  const formik = useFormik({
-    initialValues: {
-      empid: "",
-      name: "",
-      email: "",
-      mobile: "",
-      profile: null,
-    },
-    validationSchema: Yup.object({
-      empid: Yup.string()
-        .required("Employee ID is required")
-        .matches(/^\d+$/, "Employee ID must be a number"),
-      name: Yup.string().required("Name is required"),
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
-      mobile: Yup.string()
-        .required("Mobile number is required")
-        .matches(/^\d{10}$/, "Mobile number must be 10 digits"),
-      profile: Yup.mixed().required("Profile picture is required"),
-    }),
-    onSubmit: (values) => {
-      handleSubmit(values);
-      handleClose(); // Close the modal after submission
-    },
+    position: "",
   });
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -107,9 +77,8 @@ const Emloyeespage = () => {
     }));
   };
 
-  function opendetails() {
-navigatedetailspage("/employedetails")
-    
+  function opendetails(value) {
+    navigatedetailspage(`/employedetails/?query=${value}`);
   }
   // Handle file input change (profile picture)
   const handleFileChange = (e) => {
@@ -149,6 +118,7 @@ navigatedetailspage("/employedetails")
           mobile: "",
           empid: "",
           profile: "",
+          position: "",
         });
         handleClose(); // Close modal after submission
       }
@@ -162,9 +132,8 @@ navigatedetailspage("/employedetails")
   }, []);
 
   return (
-    <div style={{ height: "200vh" }} className="pt-28">
+    <div style={{}} className="">
       <Header />
-
       <div className="lg:px-28 md:px-2 sm:px-2 w-full">
         <div className="font-bold font-sans text-2xl mt-3 w-full">
           Employees
@@ -212,161 +181,122 @@ navigatedetailspage("/employedetails")
 
         {/* Add Employee Modal */}
         <Modal open={open} onClose={handleClose}>
-      <Modal.Header>
-        <Modal.Title>Add New Employee</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <form onSubmit={formik.handleSubmit}>
-          {/* Employee ID Field */}
-          <div className="mb-4">
-            <label htmlFor="empid" className="block text-sm font-medium text-gray-700">
-              Employee ID
-            </label>
-            <input
-              type="text"
-              name="empid"
-              id="empid"
-              value={formik.values.empid}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full px-3 py-2 border rounded-md ${formik.errors.empid && formik.touched.empid ? "border-red-500" : ""}`}
-              placeholder="Employee ID"
-            />
-            {formik.errors.empid && formik.touched.empid && (
-              <div className="text-red-500">{formik.errors.empid}</div>
-            )}
-          </div>
-
-          {/* Name Field */}
-          <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full px-3 py-2 border rounded-md ${formik.errors.name && formik.touched.name ? "border-red-500" : ""}`}
-              placeholder="Name"
-            />
-            {formik.errors.name && formik.touched.name && (
-                 <div className="text-red-500">{formik.errors.name}</div>
-            )}
-          </div>
-
-          {/* Email Field */}
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full px-3 py-2 border rounded-md ${formik.errors.email && formik.touched.email ? "border-red-500" : ""}`}
-              placeholder="Email"
-            />
-            {formik.errors.email && formik.touched.email && (
-                  <div className="text-red-500">{formik.errors.email}</div>
-            )}
-          </div>
-
-          {/* Mobile Field */}
-          <div className="mb-4">
-            <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">
-              Mobile
-            </label>
-            <input
-              type="text"
-              name="mobile"
-              id="mobile"
-              value={formik.values.mobile}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full px-3 py-2 border rounded-md ${formik.errors.mobile && formik.touched.mobile ? "border-red-500" : ""}`}
-              placeholder="Mobile"
-            />
-            {formik.errors.mobile && formik.touched.mobile && (
-                   <div className="text-red-500">{formik.errors.mobile}</div>
-            )}
-          </div>
-
-          {/* Profile Picture Field */}
-          <div className="mb-4">
-            <label htmlFor="profile" className="block text-sm font-medium text-gray-700">
-              Profile Picture
-            </label>
-            <input
-              type="file"
-              name="profile"
-              id="profile"
-              onChange={(e) => formik.setFieldValue("profile", e.target.files[0])}
-              onBlur={formik.handleBlur}
-              className={`w-full px-3 py-2 border rounded-md ${formik.errors.profile && formik.touched.profile ? "border-red-500" : ""}`}
-            />
-            {formik.errors.profile && formik.touched.profile && (
-                  <div className="text-red-500">{formik.errors.profile}</div>
-            )}
-          </div>
-
+          <Modal.Header>
+            <Modal.Title>
+              <div className="font-bold">Add a New Employee</div>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <form onSubmit={handleSubmit}>
+              {/* Employee fields */}
+              <input
+                type="number"
+                name="empid"
+                value={formData.empid}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="Employee ID"
+                required
+              />
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="Name"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="Email"
+                required
+              />
+              <input
+                type="text"
+                name="mobile"
+                value={formData.mobile}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="Mobile"
+                required
+              />
+              <input
+                type="text"
+                name="position"
+                value={formData.position}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="Position"
+                required
+              />
+              <input
+                type="file"
+                name="profile"
+                onChange={handleFileChange}
+                className="w-full px-3 py-2 border rounded-md"
+              />
+            </form>
+          </Modal.Body>
           <Modal.Footer>
             <Button onClick={handleClose} appearance="subtle">
               Cancel
             </Button>
-            <Button type="submit" appearance="primary">
+            <Button type="submit" onClick={handleSubmit} appearance="primary">
               Save
             </Button>
           </Modal.Footer>
-        </form>
-      </Modal.Body>
-    </Modal>
+        </Modal>
 
         {/* Employee List */}
 
-        <div className=" pb-10mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pt-4" >
-  {employees?.length > 0 ? (
-    employees.map((employee) => (
-      <div onClick={opendetails}
-        key={employee._id}
-        className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
-      >
-        {/* Profile Image Section */}
-        <div className="relative h-48 border-b-4 border-gray-100 p-2">
-          <img
-            alt="profile"
-            src={employee.profile}
-            className="w-full h-full object-cover rounded-lg shadow-md"
-          />
+        <div className=" pb-10  mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {employees?.length > 0 ? (
+            employees.map((employee) => (
+              <div
+                key={employee._id}
+                onClick={() => opendetails(employee._id)}
+                className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+              >
+                {/* Profile Image Section */}
+                <div className="relative h-48 border-b-4 border-gray-100 p-2">
+                  <img
+                    alt="profile"
+                    src={employee.profile}
+                    className="w-full h-full object-cover rounded-lg shadow-md"
+                  />
+                </div>
+
+                {/* Employee Info Section */}
+                <div className="px-4 py-3 text-start space-y-2">
+                  <h3 className="text-2xl font-semibold text-gray-800 truncate">
+                    {employee.name}
+                  </h3>
+                  <p className="text-sm text-gray-600">{employee.email}</p>
+                  <p className="text-sm text-gray-600">{employee.mobile}</p>
+                  <p className="text-sm text-gray-600 font-medium text-gray-700">
+                    {employee.empid}
+                  </p>
+                </div>
+
+                {/* Hovered Border */}
+                <div className="p-3 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-100 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                  <button className="text-white bg-indigo-600 py-1 px-3 rounded-md text-sm font-semibold transform hover:scale-105 transition duration-200">
+                    View Profile
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="w-full text-center text-lg text-gray-500 p-6">
+              No employees found.
+            </div>
+          )}
         </div>
-        
-        {/* Employee Info Section */}
-        <div className="px-4 py-3 text-start space-y-2">
-          <h3 className="text-2xl font-semibold text-gray-800 truncate">{employee.name}</h3>
-          <p className="text-sm text-gray-600">{employee.email}</p>
-          <p className="text-sm text-gray-600">{employee.mobile}</p>
-          <p className="text-sm text-gray-600 font-medium text-gray-700">{employee.empid}</p>
-        </div>
-        
-        {/* Hovered Border */}
-        <div className="p-3 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-100 opacity-0 hover:opacity-100 transition-opacity duration-300">
-          <button className="text-white bg-indigo-600 py-1 px-3 rounded-md text-sm font-semibold transform hover:scale-105 transition duration-200">
-            View Profile
-          </button>
-        </div>
-      </div>
-    ))
-  ) : (
-    <div className="w-full text-center text-lg text-gray-500 p-6">
-      No employees found.
-    </div>
-  )}
-</div>
       </div>
     </div>
   );

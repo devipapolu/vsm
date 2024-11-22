@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from "react";
 import { ButtonToolbar, Input, InputGroup } from "rsuite";
 import SearchIcon from "@rsuite/icons/Search";
 import "rsuite/dist/rsuite.min.css";
-import { Dropdown } from "rsuite";
 import Visitorprofile from "./Visitorprofile";
 import Header from "../components/Header";
 import { useCookies } from "react-cookie";
@@ -10,11 +9,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
-import { Button, Select } from "antd";
+import { Select } from "antd";
 import Allvisitorspage from "./allvisitorspage";
-
-
-
 
 const Home = () => {
   const navigate = useNavigate();
@@ -25,6 +21,27 @@ const Home = () => {
   const [latestpersons, setLatestpersons] = useState(null);
   const [searchTerm, setSearchitem] = useState("");
   const [visitors, setVisitors] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Track modal state
+
+  // Use effect to prevent body scroll when modal is open and to handle width adjustments
+  // useEffect(() => {
+  //   if (isModalOpen) {
+  //     // Add padding-right to prevent layout shift
+  //     document.body.style.overflow = "hidden"; // Prevent body from scrolling
+  //     const scrollbarWidth =
+  //       window.innerWidth - document.documentElement.clientWidth;
+  //     document.body.style.paddingRight = `${scrollbarWidth}px`; // Add space for scrollbar
+  //   } else {
+  //     document.body.style.overflow = "auto"; // Restore scrolling
+  //     document.body.style.paddingRight = "0px"; // Reset padding-right
+  //   }
+
+  //   // Clean up by restoring scroll and padding when modal is closed
+  //   return () => {
+  //     document.body.style.overflow = "auto";
+  //     document.body.style.paddingRight = "0px";
+  //   };
+  // }, [isModalOpen]);
 
   useEffect(() => {
     // If no token, redirect to signin
@@ -105,11 +122,6 @@ const Home = () => {
     setOnChangepurpose(value);
   };
 
-  const options = [
-    { value: "checkedin", label: "Checkedin" },
-    { value: "checkedout", label: "Checkedout" },
-  ];
-
   const visitingpurposeoptions = [
     { value: "Personal", label: "Personal" },
     { value: "Business", label: "Business" },
@@ -119,23 +131,18 @@ const Home = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-
     const hours = date.getHours();
     const minutes = date.getMinutes();
     const ampm = hours >= 12 ? "PM" : "AM";
     const formattedHours = hours % 12 === 0 ? 12 : hours % 12; // Convert to 12-hour format
     const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes; // Add leading zero if minutes are < 10
-
-    const formattedDate = `${date.toLocaleDateString()} ${formattedHours}:${formattedMinutes} ${ampm}`;
-
-    return formattedDate;
+    return `${date.toLocaleDateString()} ${formattedHours}:${formattedMinutes} ${ampm}`;
   };
 
-  //checkin and checkout buttons
-
+  // Check-in and check-out buttons
   const handleCheckin = async (value) => {
     await axios.put(`http://127.0.0.1:8090/api/chekin/${value}`);
-    alert("successfully checkedin");
+    alert("successfully checked in");
     window.location.reload();
   };
 
@@ -146,9 +153,9 @@ const Home = () => {
   };
 
   return (
-    <div className="pt-28 ">
+    <div className=" overflow-x-hidden">
       <Header />
-      <div className="h-full w-full lg:px-28 md:px-2 sm:px-2 mb-16" style={{}}>
+      <div className="h-full w-full lg:px-28 md:px-2 sm:px-2 mb-16 pt-28">
         {/* Header Section */}
         <div className="px-2">
           <h1 className="font-bold text-2xl">Visitors</h1>
@@ -158,10 +165,9 @@ const Home = () => {
         </div>
 
         {/* Search Input */}
-        <div className="lg:flex lg:flex-row lg:items-center px-2 lg:justify-between w-full mt-5">
+        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5">
           {/* Search Input and Add Employee Button */}
           <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-1 gap-2">
-            {/* Search Input */}
             <div className="lg:w-4/5 md:w-4/6 sm:w-full ">
               <InputGroup style={{ width: "100%", height: 40 }}>
                 <InputGroup.Addon className="bg-slate-100">
@@ -177,15 +183,6 @@ const Home = () => {
 
             {/* Select Buttons */}
             <div className="flex flex-col  justify-between md:w-1/6 gap-2 md:flex-row lg:flex-row lg:w-1/5 md:pr-1 ">
-              {/* <div className="w-full">
-                <Select
-                  placeholder="Status"
-                  optionFilterProp="label"
-                  onChange={(value) => console.log(value)}
-                  options={options}
-                  className="h-10 w-full"
-                />
-              </div> */}
               <div className="w-full">
                 <Select
                   placeholder="Purpose"
@@ -200,7 +197,7 @@ const Home = () => {
         </div>
 
         {/* Visitors profile */}
-        <div className="px-2">
+        <div className="">
           <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
             {latestpersons?.length > 0 ? (
               latestpersons
@@ -240,27 +237,23 @@ const Home = () => {
                       </div>
 
                       {!employee.checkin && (
-                        <div
-                          className="mt-3 btn btn-success"
+                        <button
+                          className="mt-3 p-2 rounded-md text-white bg-green-400"
                           onClick={() => handleCheckin(employee._id)}
                         >
                           Check in
-                        </div>
+                        </button>
                       )}
                       {!employee.checkout && employee.checkin && (
-                        <div
-                          className="mt-3 btn btn-danger"
+                        <button
+                          className="mt-3 p-2 bg-teal-400 rounded-md text-white"
                           onClick={() => handleCheckout(employee._id)}
                         >
-                          Check out 
-                          <div></div>
-                        </div>
+                          Check out
+                        </button>
                       )}
-                         <div>
-                       
-                         </div>
+                      <div></div>
                     </div>
-              
                   </div>
                 ))
             ) : (
@@ -271,7 +264,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <hr className="" />
+      <hr />
       <Allvisitorspage />
     </div>
   );

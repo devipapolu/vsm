@@ -7,6 +7,7 @@ const employeeSchema = new mongoose.Schema(
     profile: String,
     mobile: String,
     empid: Number,
+    position: String,
   },
   {
     timestamps: true,
