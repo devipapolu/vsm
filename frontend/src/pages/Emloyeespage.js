@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import SearchIcon from "@rsuite/icons/Search";
 import { InputGroup, Input, Modal, Button, ButtonToolbar } from "rsuite";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 
@@ -11,6 +11,7 @@ const Emloyeespage = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const [cookies] = useCookies(["token"]);
+  const navigatedetailspage=useNavigate()
 
   // Redirect to signin if token is missing or user is not logged in
   useEffect(() => {
@@ -75,6 +76,10 @@ const Emloyeespage = () => {
     }));
   };
 
+  function opendetails() {
+navigatedetailspage("/employedetails")
+    
+  }
   // Handle file input change (profile picture)
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -240,40 +245,45 @@ const Emloyeespage = () => {
 
         {/* Employee List */}
 
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {employees?.length > 0 ? (
-            employees.map((employee) => (
-              <div
-                key={employee._id}
-                className="bg-white rounded-lg border overflow-hidden transform transition-all duration-300
-                
-                  hover:shadow-xl"
-              >
-                <div className="relative h-44  border-b-2 p-1">
-                  <img
-                    alt="profile"
-                    src={employee.profile}
-                    className="w-full h-full object-cover rounded-md"
-                  />
-                </div>
-                <div className="px-2 pt-1 text-start">
-                  <h3 className="text-xl font-semibold text-gray-800 truncate">
-                    {employee.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-2">{employee.email}</p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {employee.mobile}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">{employee.empid}</p>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="w-full text-center text-lg text-gray-500 p-4">
-              No employees found.
-            </div>
-          )}
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" onClick={opendetails}>
+  {employees?.length > 0 ? (
+    employees.map((employee) => (
+      <div
+        key={employee._id}
+        className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+      >
+        {/* Profile Image Section */}
+        <div className="relative h-48 border-b-4 border-gray-100 p-2">
+          <img
+            alt="profile"
+            src={employee.profile}
+            className="w-full h-full object-cover rounded-lg shadow-md"
+          />
         </div>
+        
+        {/* Employee Info Section */}
+        <div className="px-4 py-3 text-start space-y-2">
+          <h3 className="text-2xl font-semibold text-gray-800 truncate">{employee.name}</h3>
+          <p className="text-sm text-gray-600">{employee.email}</p>
+          <p className="text-sm text-gray-600">{employee.mobile}</p>
+          <p className="text-sm text-gray-600 font-medium text-gray-700">{employee.empid}</p>
+        </div>
+        
+        {/* Hovered Border */}
+        <div className="p-3 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-100 opacity-0 hover:opacity-100 transition-opacity duration-300">
+          <button className="text-white bg-indigo-600 py-1 px-3 rounded-md text-sm font-semibold transform hover:scale-105 transition duration-200">
+            View Profile
+          </button>
+        </div>
+      </div>
+    ))
+  ) : (
+    <div className="w-full text-center text-lg text-gray-500 p-6">
+      No employees found.
+    </div>
+  )}
+</div>
+
 
         {/* <div>
           {employees?.length > 0 ? (
