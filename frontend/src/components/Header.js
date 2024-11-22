@@ -11,6 +11,8 @@ import { useCookies } from "react-cookie";
 import { Button, Modal } from "rsuite";
 import Addvisitorpage from "../pages/Addvisitorpage";
 
+
+
 const Header = () => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);

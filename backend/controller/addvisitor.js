@@ -23,7 +23,7 @@ async function Addvisitor(req, res) {
     !visitingpurpose ||
     !photo
   ) {
-    return res.status(400).json({
+    return res.status(204).json({
       message: "All fields are required",
       success: false,
       error: true,
