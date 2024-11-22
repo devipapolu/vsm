@@ -126,9 +126,8 @@ const Emloyeespage = () => {
   }, []);
 
   return (
-    <div style={{ height: "200vh" }} className="pt-28">
+    <div style={{}} className="">
       <Header />
-
       <div className="lg:px-28 md:px-2 sm:px-2 w-full">
         <div className="font-bold font-sans text-2xl mt-3 w-full">
           Employees
@@ -243,7 +242,7 @@ const Emloyeespage = () => {
           {employees?.length > 0 ? (
             employees.map((employee) => (
               <div key={employee._id}>
-                <img alt="profile" src={employee.profile} />
+                {/* <img alt="profile" src={employee.profile} /> */}
                 <div>{employee.name}</div>
                 <div>{employee.email}</div>
                 <div>{employee.mobile}</div>
