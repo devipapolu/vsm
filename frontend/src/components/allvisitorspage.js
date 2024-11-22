@@ -176,15 +176,21 @@ const Allvisitorspage = () => {
 
                         <td className="px-4 py-2">{employee.mobile}</td>
 
-                        <td className="px-4 py-2">
+                        <td className="px-4 py-2 hover:pointer-events-none">
                           {!employee.checkin && !employee.checkout ? (
-                            <div>Pending</div>
+                            <div className="text-sm inline-block bg-orange-200 py-1 px-2 rounded-full">
+                              Pending
+                            </div>
                           ) : (
                             <div>
                               {employee.checkin && !employee.checkout ? (
-                                <div>Checked-in</div>
+                                <div className="text-sm inline-block bg-cyan-300 py-1 px-2 rounded-full">
+                                  Checked-in
+                                </div>
                               ) : (
-                                <div>Checked-out</div>
+                                <div className="text-sm inline-block bg-red-300 py-1 px-2 rounded-full">
+                                  Checked-out
+                                </div>
                               )}
                             </div>
                           )}
