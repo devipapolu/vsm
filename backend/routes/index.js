@@ -12,6 +12,7 @@ const Addvisitor = require("../controller/addvisitor");
 const Getvisitors = require("../controller/getvisitors");
 const Updatecheckin = require("../controller/updatecheckin");
 const Updatecheckout = require("../controller/updatecheckout");
+const GetEmployeebyid = require("../controller/getuserdetailsbyid");
 
 const router = express.Router();
 
@@ -37,5 +38,8 @@ router.put("/chekin/:id", Updatecheckin);
 
 //update checkout
 router.put("/checkout/:id", Updatecheckout);
+
+//Get employee by id
+router.get("/getempbyid/:id", GetEmployeebyid);
 
 module.exports = router;
