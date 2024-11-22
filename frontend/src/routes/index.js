@@ -34,10 +34,9 @@ const router = createBrowserRouter(
           element: <Profilepage />,
         },
         {
-path:"/employedetails",
-element:<Employeedetails/>
-
-        }
+          path: "/employedetails",
+          element: <Employeedetails />,
+        },
       ],
     },
   ],

@@ -2,7 +2,7 @@ const employeeModel = require("../models/Employeemodel");
 
 async function RegisterEmployee(req, res) {
   try {
-    const { name, email, profile, mobile, empid } = req.body;
+    const { name, email, profile, mobile, empid, position } = req.body;
 
     if (!name) {
       return res.status(201).json({
@@ -52,6 +52,7 @@ async function RegisterEmployee(req, res) {
       profile,
       mobile,
       empid,
+      position,
     };
 
     const employee = await employeeModel.create(newemployee);

@@ -11,8 +11,6 @@ import { useCookies } from "react-cookie";
 import { Button, Modal } from "rsuite";
 import Addvisitorpage from "../pages/Addvisitorpage";
 
-
-
 const Header = () => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
@@ -217,7 +215,7 @@ const Header = () => {
           size={"lg:calc(100% - 100px)"}
           open={openmodal}
           onClose={handleClose}
-          className="lg:px-28 md:px-20"
+          className="lg:px-28 md:px-20 sticky"
         >
           <Modal.Header>
             <Modal.Title>
