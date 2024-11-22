@@ -13,6 +13,7 @@ const Getvisitors = require("../controller/getvisitors");
 const Updatecheckin = require("../controller/updatecheckin");
 const Updatecheckout = require("../controller/updatecheckout");
 const GetEmployeebyid = require("../controller/getuserdetailsbyid");
+const Getvisitorbyname = require("../controller/getvisitorslistbyname");
 
 const router = express.Router();
 
@@ -41,5 +42,8 @@ router.put("/checkout/:id", Updatecheckout);
 
 //Get employee by id
 router.get("/getempbyid/:id", GetEmployeebyid);
+
+//Getvisitor by name filter
+router.get("/getvisitorbyname/:name", Getvisitorbyname);
 
 module.exports = router;
