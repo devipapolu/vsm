@@ -3,7 +3,7 @@ import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam"; // Import react-webcam
 
-const Addvisitorpage = ({ handleClose }) => {
+const AddVisitorPage = ({ handleClose }) => {
   const [employees, setEmployees] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [photo, setPhoto] = useState(null);
@@ -262,4 +262,4 @@ const Addvisitorpage = ({ handleClose }) => {
   );
 };
 
-export default Addvisitorpage;
+export default AddVisitorPage;

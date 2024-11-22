@@ -5,6 +5,7 @@ import Emloyeespage from "../pages/Emloyeespage";
 import Addvisitorpage from "../pages/Addvisitorpage";
 import Signin from "../pages/signinpage";
 import Profilepage from "../pages/Profilepage";
+import Employeedetails from "../pages/Employeedetails";
 
 const router = createBrowserRouter(
   [
@@ -32,13 +33,18 @@ const router = createBrowserRouter(
           path: "profile",
           element: <Profilepage />,
         },
+        {
+path:"/employedetails",
+element:<Employeedetails/>
+
+        }
       ],
     },
   ],
   {
     future: {
       v7_skipActionErrorRevalidation: true, // Your previous flag
-      v7_normalizeFormMethod: true, // New flag for form method normalization
+      v7_normalizeFormMethod: true, // New flag for form method no rmalization
     },
   }
 );

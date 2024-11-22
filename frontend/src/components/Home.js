@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
+import { Button, Select } from "antd";
 import Allvisitorspage from "./allvisitorspage";
 
 const Home = () => {
@@ -250,8 +251,10 @@ const Home = () => {
                           onClick={() => handleCheckout(employee._id)}
                         >
                           Check out
+                          <div></div>
                         </button>
                       )}
+                      <div></div>
                     </div>
                   </div>
                 ))
