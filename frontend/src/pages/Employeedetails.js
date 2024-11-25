@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { Image } from "antd";
 
 function Employeedetails() {
   const [searchParams] = useSearchParams();
@@ -99,14 +100,16 @@ function Employeedetails() {
               {employee?.map((emp) => (
                 <div key={emp._id}>
                   {/* Clickable image to open modal */}
-                  <img
+
+                  <Image width={200} src={emp.profile} />
+                  {/* <img
                     alt="Employee"
                     src={emp.profile}
                     className="rounded-xl cursor-pointer"
                     width={"150px"}
                     height={"150px"}
                     onClick={() => openModal(emp.profile)} // Open the modal with the large image
-                  />
+                  /> */}
                   <div className="text-2xl font-bold my-4">{emp.name}</div>
                   <div className="grid lg:grid-cols-3 sm:grid-cols-1 md:grid-cols-2">
                     <div>

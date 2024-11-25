@@ -111,7 +111,7 @@ const Allvisitorspage = () => {
         </div>
 
         {/* Search Input */}
-        <div className="lg:flex lg:flex-row lg:items-center px-2 lg:justify-between w-full mt-5">
+        <div className="lg:flex lg:flex-row lg:items-center  lg:justify-between w-full mt-5">
           <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-1 gap-2">
             <div className="lg:w-4/5 md:w-4/6 sm:w-full ">
               <InputGroup style={{ width: "100%", height: 40 }}>
@@ -140,9 +140,14 @@ const Allvisitorspage = () => {
 
         {/* Loading indicator */}
         {loading ? (
-          <div className="text-center mt-8">Loading visitors...</div>
+          <div className="  flex justify-center mt-4 items-center">
+            <div>
+              <div className="loader"></div>
+              <div>Loading</div>
+            </div>
+          </div>
         ) : (
-          <div className="px-2 mt-3 overflow-x-auto">
+          <div className=" mt-3 overflow-x-auto">
             <table className="min-w-full table-auto border-collapse">
               <thead className="bg-gray-100">
                 <tr>
@@ -176,7 +181,7 @@ const Allvisitorspage = () => {
 
                         <td className="px-4 py-2">{employee.mobile}</td>
 
-                        <td className="px-4 py-2 hover:pointer-events-none">
+                        <td className="px-1 py-2 hover:pointer-events-none">
                           {!employee.checkin && !employee.checkout ? (
                             <div className="text-sm inline-block bg-orange-200 py-1 px-2 rounded-full">
                               Pending
