@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import SearchIcon from "@rsuite/icons/Search";
-import { InputGroup, Input, Modal, Button, ButtonToolbar } from "rsuite";
+import { InputGroup, Input, Modal, Button, ButtonToolbar, toaster } from "rsuite";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+
 
 const Emloyeespage = () => {
   const navigate = useNavigate();
@@ -110,7 +115,14 @@ const Emloyeespage = () => {
       }
 
       if (responseData.success) {
-        alert("Employee created successfully!");
+     
+
+function success() {
+  toast("Wow so easy!");
+  
+}
+success()
+
         GetEmployees(); // Refresh employee list
         setFormData({
           name: "",
@@ -180,7 +192,7 @@ const Emloyeespage = () => {
         </div>
 
         {/* Add Employee Modal */}
-        <Modal open={open} onClose={handleClose}>
+        <Modal open={open} onClose={handleClose} className="bg-slate-400">
           <Modal.Header>
             <Modal.Title>
               <div className="font-bold">Add a New Employee</div>
@@ -190,7 +202,7 @@ const Emloyeespage = () => {
             <form onSubmit={handleSubmit}>
               {/* Employee fields */}
               <input
-                type="number"
+                type="text"
                 name="empid"
                 value={formData.empid}
                 onChange={handleInputChange}
@@ -288,6 +300,7 @@ const Emloyeespage = () => {
                   <button className="text-white bg-indigo-600 py-1 px-3 rounded-md text-sm font-semibold transform hover:scale-105 transition duration-200">
                     View Profile
                   </button>
+     
                 </div>
               </div>
             ))

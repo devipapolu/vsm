@@ -62,7 +62,7 @@ const AddVisitorPage = ({ handleClose }) => {
   // Run GetEmployees once on component mount
   useEffect(() => {
     GetEmployees();
-  }, []);
+  }, []); 
 
   // Map employees to options for the Select component
   const employeeOptions = employees.map((employee) => ({
