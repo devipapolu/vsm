@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { Alert } from 'antd';
 
 const Addemployee = ({ handleClose }) => {
   const [filename, setFlename] = useState(null);
@@ -166,7 +167,9 @@ const Addemployee = ({ handleClose }) => {
         }
 
         if (responseData.success) {
-          alert("Employee created successfully!");
+          // alert("Employee created successfully!");
+          <> <Alert message="Success Tips" type="success" showIcon />
+    <br /></>
           setFormData({
             name: "",
             email: "",

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useCookies } from "react-cookie"; // Import useCookies hook from react-cookie
+import { useCookies } from "react-cookie";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slice";
 
@@ -9,26 +9,85 @@ const Signin = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [generalError, setGeneralError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [cookies, setCookie] = useCookies(["token"]); // Initialize cookies hook and set default token cookie value
+  const [cookies, setCookie] = useCookies(["token"]);
   const navigate = useNavigate();
+
+  // Function to validate email format
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Function to validate password requirements
+  const validatePassword = (password) => {
+    // Example: Minimum 4 characters
+    return password.length >= 4;
+  };
+
+  // Dynamic email validation
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    // Validate the email dynamically
+    if (value && !validateEmail(value)) {
+      setEmailError("Invalid email format.");
+    } else {
+      setEmailError("");
+    }
+
+    // Clear any general errors when the user types
+    setGeneralError("");
+  };
+
+  // Dynamic password validation
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+
+    // Validate the password dynamically
+    if (value && !validatePassword(value)) {
+      setPasswordError("Password must be at least 4 characters long.");
+    } else {
+      setPasswordError("");
+    }
+
+    // Clear any general errors when the user types
+    setGeneralError("");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage(""); // Clear any previous error messages
+    setGeneralError("");
+
+    // Final validation check before submitting
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setPasswordError("Password must be at least 4 characters long.");
+      setLoading(false);
+      return;
+    }
 
     try {
       // Make a POST request to login
       const response = await axios.post(
-        "http://127.0.0.1:8090/api/login", // API endpoint for login
+        "http://127.0.0.1:8090/api/login",
         {
           email: email,
           password: password,
         },
         {
-          withCredentials: true, // This is essential to send cookies with requests
+          withCredentials: true,
         }
       );
 
@@ -42,30 +101,19 @@ const Signin = () => {
         // Store the token in a cookie with an expiration time (e.g., 7 days)
         setCookie("token", responseData.token, {
           path: "/",
-          expires: new Date(Date.now() + 86400000), // 86400000 ms = 1 day
+          expires: new Date(Date.now() + 86400000),
         });
 
-        navigate("/"); // Navigate to dashboard on successful login
+        navigate("/");
       } else {
-        setErrorMessage(responseData.message || "Login failed");
+        setGeneralError(responseData.message || "Login failed");
       }
     } catch (error) {
-      setErrorMessage("An error occurred. Please try again.");
+      setGeneralError("An error occurred. Please try again.");
       console.error("Login error:", error);
     } finally {
       setLoading(false);
     }
-  };
-
-  // Clear error message whenever the user starts typing
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "email") {
-      setEmail(value);
-    } else if (name === "password") {
-      setPassword(value);
-    }
-    setErrorMessage(""); // Clear the error when the user modifies the input
   };
 
   return (
@@ -73,14 +121,15 @@ const Signin = () => {
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold text-center mb-6">Sign In</h2>
 
-        {errorMessage && (
+        {/* General error message */}
+        {generalError && (
           <div className="bg-red-100 text-red-800 p-2 mb-4 rounded-md">
-            {errorMessage}
+            {generalError}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+        <form onSubmit={handleSubmit} className="space-y-10">
+          <div className="space-y-2">
             <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700"
@@ -91,15 +140,23 @@ const Signin = () => {
               type="email"
               id="email"
               name="email"
-              className="w-full p-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full p-2 mt-2 border ${
+                emailError ? "border-red-500" : "border-gray-300"
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200`}
               placeholder="Enter your email"
               value={email}
-              onChange={handleInputChange} // Use the common handler for both inputs
+              onChange={handleEmailChange}
               required
             />
+            {/* Reserve space for email error */}
+            <div className="h-5  ">
+              {emailError && (
+                <p className="text-red-600 text-sm mt-1">{emailError}</p>
+              )}
+            </div>
           </div>
 
-          <div>
+          <div className="space-y-2">
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700"
@@ -110,18 +167,28 @@ const Signin = () => {
               type="password"
               id="password"
               name="password"
-              className="w-full p-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full p-2 mt-2 border ${
+                passwordError ? "border-red-500" : "border-gray-300"
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200`}
               placeholder="Enter your password"
               value={password}
-              onChange={handleInputChange} // Use the common handler for both inputs
+              onChange={handlePasswordChange}
               required
             />
+            {/* Reserve space for password error */}
+            <div className="h-5">
+              {passwordError && (
+                <p className="text-red-600 text-sm mt-1">{passwordError}</p>
+              )}
+            </div>
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
-            disabled={loading}
+            className={`w-full py-2 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 ${
+              (loading || emailError || passwordError) && "opacity-50 cursor-not-allowed"
+            }`}
+            disabled={loading || emailError || passwordError}
           >
             {loading ? "Signing In..." : "Sign In"}
           </button>
