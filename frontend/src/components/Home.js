@@ -9,8 +9,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
-import { Select } from "antd";
+import { Dropdown, Select, Space } from "antd";
 import Allvisitorspage from "./allvisitorspage";
+import { DownOutlined } from "@ant-design/icons";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -127,7 +128,7 @@ const Home = () => {
     { value: "Business", label: "Business" },
   ];
 
-  console.log("latest", latestpersons);
+  // console.log("latest", latestpersons);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -150,6 +151,28 @@ const Home = () => {
     await axios.put(`http://127.0.0.1:8090/api/checkout/${value}`);
     alert("successfully checked out");
     window.location.reload();
+  };
+
+  const items = [
+    {
+      label: "1st menu item",
+      key: "0",
+    },
+    {
+      label: "2nd menu item",
+      key: "1",
+    },
+    {
+      type: "divider",
+    },
+    {
+      label: "3rd menu item",
+      key: "3",
+    },
+  ];
+
+  const handleMenuClick = (value) => {
+    alert(value.key);
   };
 
   return (
@@ -236,23 +259,40 @@ const Home = () => {
                         {formatDate(employee.createdAt)}
                       </div>
 
-                      {!employee.checkin && (
-                        <button
-                          className="mt-3 p-2 rounded-md text-white bg-green-400"
-                          onClick={() => handleCheckin(employee._id)}
+                      <div className="flex flex-row gap-3">
+                        {/* Check-in button */}
+                        {!employee.checkin && (
+                          <button
+                            className="mt-3 p-2 rounded-md text-white bg-green-400"
+                            onClick={() => handleCheckin(employee._id)}
+                          >
+                            Check in
+                          </button>
+                        )}
+
+                        {/* Check-out button */}
+                        {!employee.checkout && employee.checkin && (
+                          <button
+                            className="mt-3 p-2 bg-teal-400 rounded-md text-white"
+                            onClick={() => handleCheckout(employee._id)}
+                          >
+                            Check out
+                          </button>
+                        )}
+
+                        {/* Dropdown button */}
+                        <Dropdown
+                          menu={{
+                            items,
+                            onClick: handleMenuClick,
+                          }}
+                          trigger={["click"]}
                         >
-                          Check in
-                        </button>
-                      )}
-                      {!employee.checkout && employee.checkin && (
-                        <button
-                          className="mt-3 p-2 bg-teal-400 rounded-md text-white"
-                          onClick={() => handleCheckout(employee._id)}
-                        >
-                          Check out
-                        </button>
-                      )}
-                      <div></div>
+                          <button className="mt-3 p-2 bg-red-600 rounded-md text-white">
+                            Click
+                          </button>
+                        </Dropdown>
+                      </div>
                     </div>
                   </div>
                 ))

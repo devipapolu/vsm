@@ -6,7 +6,7 @@ const employeeSchema = new mongoose.Schema(
     email: String,
     profile: String,
     mobile: String,
-    empid: Number,
+    empid: String,
     position: String,
   },
   {
