@@ -17,7 +17,8 @@ async function Updatecheckin(req, res) {
       {
         $set: {
           checkinTime: new Date(), // Set checkinTime to the current time
-          checkin: true, // Set checkin status to true
+          checkin: true,
+          status: "checked-in",
         },
       }
     );

@@ -45,6 +45,8 @@ const Signin = () => {
           expires: new Date(Date.now() + 86400000), // 86400000 ms = 1 day
         });
 
+        console.log("role", responseData.user.role);
+
         navigate("/"); // Navigate to dashboard on successful login
       } else {
         setErrorMessage(responseData.message || "Login failed");
