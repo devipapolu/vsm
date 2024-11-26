@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { ButtonToolbar, Input, InputGroup } from "rsuite";
+import { ButtonToolbar, Input, InputGroup, Modal, Placeholder } from "rsuite";
 import SearchIcon from "@rsuite/icons/Search";
 import "rsuite/dist/rsuite.min.css";
 import Visitorprofile from "./Visitorprofile";
@@ -9,9 +9,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
-import { Dropdown, Select, Space } from "antd";
+import { Button, Dropdown, Select, Space } from "antd";
 import Allvisitorspage from "./allvisitorspage";
 import { DownOutlined } from "@ant-design/icons";
+import AddVisitorPage from "../pages/Addvisitorpage";
+import Profilepage from "../pages/Profilepage";
+import Editvisitor from "./editvisitor";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -23,6 +26,16 @@ const Home = () => {
   const [searchTerm, setSearchitem] = useState("");
   const [visitors, setVisitors] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Track modal state
+
+  const [openmodal, setOpenmodal] = useState(false);
+  const [deletemodal, setDeletemodal] = useState(false);
+  const handleOpen = () => setOpenmodal(true);
+  const handleClose = () => {
+    setOpenmodal(false);
+    setEditid("");
+    setClickedname("");
+  };
+  const handledeleteClose = () => setDeletemodal(false);
 
   // Use effect to prevent body scroll when modal is open and to handle width adjustments
   // useEffect(() => {
@@ -155,24 +168,49 @@ const Home = () => {
 
   const items = [
     {
-      label: "1st menu item",
-      key: "0",
+      label: "Edit",
+      key: "edit",
     },
     {
-      label: "2nd menu item",
-      key: "1",
-    },
-    {
-      type: "divider",
-    },
-    {
-      label: "3rd menu item",
-      key: "3",
+      label: "Delete",
+      key: "delete",
     },
   ];
 
-  const handleMenuClick = (value) => {
-    alert(value.key);
+  const [editid, setEditid] = useState("");
+  const [clickedname, setClickedname] = useState("");
+
+  const handleMenuClick = (value, id, name) => {
+    // alert(id.key);
+    // alert(value);
+    setClickedname(name);
+
+    if (id.key === "edit") {
+      setOpenmodal(true);
+      setEditid(value);
+    } else {
+      setDeletemodal(true);
+      setEditid(value);
+    }
+  };
+
+  const handleOk = async () => {
+    try {
+      const response = await axios.delete(
+        `http://127.0.0.1:8090/api/deletevisitor/${editid}`
+      );
+
+      const responseData = response.data;
+
+      if (responseData.success) {
+        alert("Visitor " + clickedname + " deleted");
+        getvisitors();
+      } else {
+        alert(responseData.message);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   return (
@@ -238,9 +276,14 @@ const Home = () => {
                       />
                     </div>
                     <div className="px-2 pt-1 text-start">
-                      <h3 className="text-xl font-semibold text-gray-800 truncate">
-                        {employee.name}
-                      </h3>
+                      <div className=" flex flex-row justify-between items-center">
+                        <h3 className="text-xl font-semibold text-gray-800 truncate">
+                          {employee.name}
+                        </h3>
+                        <div className="bg-violet-400 px-2 rounded-md text-white">
+                          {employee.status}
+                        </div>
+                      </div>
                       <div className="text-sm text-gray-600 mt-3">Visiting</div>
                       <div className="text-md text-gray-900">
                         {employee.visitingperson}
@@ -284,16 +327,40 @@ const Home = () => {
                         <Dropdown
                           menu={{
                             items,
-                            onClick: handleMenuClick,
+                            onClick: (e) =>
+                              handleMenuClick(employee._id, e, employee.name),
                           }}
                           trigger={["click"]}
                         >
-                          <button className="mt-3 p-2 bg-red-600 rounded-md text-white">
-                            Click
-                          </button>
+                          <button className="mt-3 py-2 px-3 bi bi-three-dots border text-black rounded-md"></button>
                         </Dropdown>
                       </div>
                     </div>
+                    <Modal open={deletemodal} onClose={handledeleteClose}>
+                      <Modal.Header>
+                        <Modal.Title>Delete Visitor</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <p>
+                          You are about to delete the visitor, are you sure?
+                        </p>
+                      </Modal.Body>
+                      <Modal.Footer className=" flex gap-3 justify-end">
+                        {/* Cancel button to close modal */}
+                        <Button onClick={handledeleteClose} appearance="subtle">
+                          Cancel
+                        </Button>
+
+                        {/* Delete button */}
+                        <button
+                          onClick={handleOk} // Handle deletion
+                          className="bg-red-600 text-white border px-3 py-1 rounded-md hover:bg-gray-400 hover:text-black" // Tailwind CSS classes for red button and text
+                          appearance="primary"
+                        >
+                          Delete
+                        </button>
+                      </Modal.Footer>
+                    </Modal>
                   </div>
                 ))
             ) : (
@@ -303,6 +370,30 @@ const Home = () => {
             )}
           </div>
         </div>
+        <Modal
+          size={"lg:calc(100% - 100px)"}
+          open={openmodal}
+          onClose={handleClose}
+          className="lg:px-28 md:px-20 sticky"
+        >
+          <Modal.Header>
+            <Modal.Title>
+              <div className="font-bold text-center"> Add a New visitor</div>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Editvisitor editid={editid} handleClose={handleClose} />
+          </Modal.Body>
+          <Modal.Footer></Modal.Footer>
+        </Modal>
+
+        {/* {deletemodal && (
+          <Profilepage
+            open={deletemodal}
+            handleCancel={handledeleteClose}
+            handleOk={handleOk}
+          />
+        )} */}
       </div>
       <hr />
       <Allvisitorspage />
