@@ -14,6 +14,9 @@ const Updatecheckin = require("../controller/updatecheckin");
 const Updatecheckout = require("../controller/updatecheckout");
 const GetEmployeebyid = require("../controller/getuserdetailsbyid");
 const Getvisitorbyname = require("../controller/getvisitorslistbyname");
+const Getvisitorbyid = require("../controller/getvisitorbyid");
+const Updatevisitor = require("../controller/Editvisitor");
+const Deletevisitor = require("../controller/Deletevisitor");
 
 const router = express.Router();
 
@@ -45,5 +48,14 @@ router.get("/getempbyid/:id", GetEmployeebyid);
 
 //Getvisitor by name filter
 router.get("/getvisitorbyname/:name", Getvisitorbyname);
+
+//Get visitor by id
+router.get("/getvisitorbyid/:id", Getvisitorbyid);
+
+//Editvisitor
+router.put("/updatevisitor/:id", Updatevisitor);
+
+//Delete Visitor
+router.delete("/deletevisitor/:id", Deletevisitor);
 
 module.exports = router;

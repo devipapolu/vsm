@@ -12,6 +12,7 @@ const Visitorschema = mongoose.Schema(
     checkin: Boolean,
     checkouttime: Date,
     checkout: Boolean,
+    status: String,
   },
 
   {
