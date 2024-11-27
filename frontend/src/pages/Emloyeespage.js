@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import SearchIcon from "@rsuite/icons/Search";
-import { InputGroup, Input, Modal, Button, ButtonToolbar } from "rsuite";
+import { InputGroup, Input, Modal, Button, ButtonToolbar, toaster } from "rsuite";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 import Addemployee from "./aadEmployee";
-
+ 
 const Emloyeespage = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
@@ -128,7 +128,7 @@ const Emloyeespage = () => {
         </div>
 
         {/* Add Employee Modal */}
-        <Modal open={open} onClose={handleClose}>
+        <Modal open={open} onClose={handleClose} className="bg-slate-400">
           <Modal.Header>
             <Modal.Title>
               <div className="font-bold text-center">Add a new Employee</div>
