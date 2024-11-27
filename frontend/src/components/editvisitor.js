@@ -146,6 +146,8 @@ const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
 
       if (responseData.message === "Visitor updated successfully.") {
         alert("Updated successfully");
+        getload()
+        getvisitors()
       }
 
       handleClose();

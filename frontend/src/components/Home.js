@@ -103,13 +103,15 @@ const Home = () => {
   }, []);
 
   // Filter pending users that haven't checked in or out
-  const pendingusers = visitors?.filter(
-    (pvisitor) => !pvisitor.checkin || !pvisitor.checkout
-  );
+  // const pendingusers = visitors?.filter(
+  //   (pvisitor) => !pvisitor.checkin || !pvisitor.checkout
+  // );
 
   // Memoize the filtered search results to optimize performance
   const filteredVisitors = useMemo(() => {
-    let filtered = pendingusers;
+    let filtered =  visitors?.filter(
+      (pvisitor) => !pvisitor.checkin || !pvisitor.checkout
+    );
 
     // Filter by search term
     if (searchTerm !== "") {
@@ -126,7 +128,7 @@ const Home = () => {
     }
 
     return filtered;
-  }, [searchTerm, pendingusers, onChangepurpose]);
+  }, [searchTerm, visitors, onChangepurpose]);
 
   useEffect(() => {
     setLatestpersons(filteredVisitors);
@@ -265,7 +267,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-
         {/* Visitors profile */}
         <div className="">
           <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
@@ -374,7 +375,6 @@ const Home = () => {
                 ))
             ) : (
               <div className="w-full text-center text-lg text-gray-500 p-2">
-               No Visitors found....
                 No Visitors found.
               </div>
             )}

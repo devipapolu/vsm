@@ -7,6 +7,7 @@ import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
 import { useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";  // Import the xlsx library
 
 const Allvisitorspage = ({ getload }) => {
   const navigate = useNavigate();
@@ -80,12 +81,6 @@ const Allvisitorspage = ({ getload }) => {
       );
     }
 
-    // if (monthselect) {
-    //   filtered = filtered.filter(
-    //     (person) => getMonthFromDate(person.createdAt) === monthselect
-    //   );
-    // }
-
     return filtered;
   }, [searchTerm, onChangepurpose, visitors]);
 
@@ -122,6 +117,45 @@ const Allvisitorspage = ({ getload }) => {
     return formattedDate;
   };
 
+  // Function to download data as Excel
+  const downloadExcel = () => {
+    const data = latestpersons.map((visitor) => ({
+      Name: visitor.name,
+      Mobile: visitor.mobile,
+      Status:
+        !visitor.checkin && !visitor.checkout
+          ? "Pending"
+          : visitor.checkin && !visitor.checkout
+          ? "Checked-in"
+          : "Checked-out",
+      "Visiting Purpose": visitor.visitingpurpose,
+      "Check-in Time": visitor.checkinTime
+        ? formatDate(visitor.checkinTime)
+        : "--",
+      "Check-out Time": visitor.checkouttime
+        ? formatDate(visitor.checkouttime)
+        : "--",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Visitors");
+
+    // Generate download link
+    const excelFile = XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+    const buffer = new ArrayBuffer(excelFile.length);
+    const view = new Uint8Array(buffer);
+    for (let i = 0; i < excelFile.length; i++) {
+      view[i] = excelFile.charCodeAt(i) & 0xff;
+    }
+
+    const blob = new Blob([buffer], { type: "application/octet-stream" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "visitors.xlsx";
+    link.click();
+  };
+
   return (
     <div>
       <div
@@ -133,7 +167,7 @@ const Allvisitorspage = ({ getload }) => {
         </div>
 
         {/* Search Input */}
-        <div className="lg:flex lg:flex-row lg:items-center  lg:justify-between w-full mt-5">
+        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5">
           <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-1 gap-2">
             <div className="lg:w-4/6 md:w-4/6 sm:w-full ">
               <InputGroup style={{ width: "100%", height: 40 }}>
@@ -164,6 +198,15 @@ const Allvisitorspage = ({ getload }) => {
             </div>
           </div>
         </div>
+        {/* Download Excel Button */}
+        <div className="mt-4">
+          <button
+            onClick={downloadExcel}
+            className="bg-blue-500 text-white py-2 px-4 rounded"
+          >
+            
+          </button>
+        </div>
 
         {/* Loading indicator */}
         {loading ? (
@@ -176,17 +219,15 @@ const Allvisitorspage = ({ getload }) => {
         ) : (
           <div className=" mt-3 overflow-x-auto">
             <table className="min-w-full table-auto border-collapse">
-              <thead className="bg-gray-100">
+              <thead className="bg-gray-100"> 
                 <tr>
                   <th className="px-4 py-2 text-left">Profile</th>
                   <th className="px-4 py-2 text-left">Name</th>
-                  {/* <th className="px-4 py-2 text-left">Email</th> */}
                   <th className="px-4 py-2 text-left">Mobile</th>
-                  {/* <th className="px-4 py-2 text-left">Emp ID</th> */}
                   <th className="px-4 py-2 text-left">Status</th>
                   <th className="px-4 py-2 text-left">Visiting Purpose</th>
-                  <th className="px-4 py-2 text-left">chekin Time</th>
-                  <th className="px-4 py-2 text-left">chekout Time</th>
+                  <th className="px-4 py-2 text-left">Check-in Time</th>
+                  <th className="px-4 py-2 text-left">Check-out Time</th>
                 </tr>
               </thead>
               <tbody>
@@ -209,9 +250,6 @@ const Allvisitorspage = ({ getload }) => {
                         <td className="px-4 py-2">{employee.mobile}</td>
 
                         <td className="px-4 py-2 hover:pointer-events-none ">
-                          {/* <div className="text-sm inline-block bg-orange-200 px-2 rounded-full">
-                            {employee.status}
-                          </div> */}
                           {!employee.checkin && !employee.checkout ? (
                             <div className="text-sm inline-block bg-orange-200 py-1 px-2 rounded-full">
                               Pending
@@ -239,7 +277,6 @@ const Allvisitorspage = ({ getload }) => {
                           ) : (
                             <div>{formatDate(employee.checkinTime)}</div>
                           )}
-                          {/* {formatDate(employee.checkinTime)} */}
                         </td>
                         <td className="px-4 py-2">
                           {!employee.checkouttime ? (
@@ -247,7 +284,6 @@ const Allvisitorspage = ({ getload }) => {
                           ) : (
                             <div>{formatDate(employee.checkouttime)}</div>
                           )}
-                          {/* {formatDate(employee.checkinTime)} */}
                         </td>
                       </tr>
                     ))
