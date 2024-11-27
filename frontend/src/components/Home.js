@@ -37,6 +37,12 @@ const Home = () => {
   };
   const handledeleteClose = () => setDeletemodal(false);
 
+  const [reloadVisitors, setReloadVisitors] = useState(false);
+
+  const handleUserAdded = () => {
+    setReloadVisitors((prev) => !prev); // Toggle to trigger refresh
+  };
+
   // Use effect to prevent body scroll when modal is open and to handle width adjustments
   // useEffect(() => {
   //   if (isModalOpen) {
@@ -157,13 +163,15 @@ const Home = () => {
   const handleCheckin = async (value) => {
     await axios.put(`http://127.0.0.1:8090/api/chekin/${value}`);
     alert("successfully checked in");
-    window.location.reload();
+    handleUserAdded();
+    getvisitors();
   };
 
   const handleCheckout = async (value) => {
     await axios.put(`http://127.0.0.1:8090/api/checkout/${value}`);
     alert("successfully checked out");
-    window.location.reload();
+    handleUserAdded();
+    getvisitors();
   };
 
   const items = [
@@ -205,6 +213,8 @@ const Home = () => {
       if (responseData.success) {
         alert("Visitor " + clickedname + " deleted");
         getvisitors();
+        setDeletemodal(false);
+        handleUserAdded();
       } else {
         alert(responseData.message);
       }
@@ -215,7 +225,7 @@ const Home = () => {
 
   return (
     <div className=" overflow-x-hidden">
-      <Header />
+      <Header Getvisitors={getvisitors} getload={handleUserAdded} />
       <div className="h-full w-full lg:px-28 md:px-2 sm:px-2 mb-16 pt-28">
         {/* Header Section */}
         <div className="px-2">
@@ -224,7 +234,6 @@ const Home = () => {
             All the visitors that are currently on the premises
           </p>
         </div>
-
         {/* Search Input */}
         <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5">
           {/* Search Input and Add Employee Button */}
@@ -276,11 +285,11 @@ const Home = () => {
                       />
                     </div>
                     <div className="px-2 pt-1 text-start">
-                      <div className=" flex flex-row justify-between items-center">
+                      <div className=" flex flex-col justify-between items-start">
                         <h3 className="text-xl font-semibold text-gray-800 truncate">
                           {employee.name}
                         </h3>
-                        <div className="bg-violet-400 px-2 rounded-md text-white">
+                        <div className="bg-violet-200 px-2 rounded-md  text-secondary">
                           {employee.status}
                         </div>
                       </div>
@@ -366,6 +375,7 @@ const Home = () => {
             ) : (
               <div className="w-full text-center text-lg text-gray-500 p-2">
                No Visitors found....
+                No Visitors found.
               </div>
             )}
           </div>
@@ -378,11 +388,16 @@ const Home = () => {
         >
           <Modal.Header>
             <Modal.Title>
-              <div className="font-bold text-center"> Add a New visitor</div>
+              <div className="font-bold text-center"> Edit visitor details</div>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Editvisitor editid={editid} handleClose={handleClose} />
+            <Editvisitor
+              editid={editid}
+              handleClose={handleClose}
+              getvisitors={getvisitors}
+              getload={handleUserAdded}
+            />
           </Modal.Body>
           <Modal.Footer></Modal.Footer>
         </Modal>
@@ -396,7 +411,7 @@ const Home = () => {
         )} */}
       </div>
       <hr />
-      <Allvisitorspage />
+      <Allvisitorspage getload={reloadVisitors} />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { Button, Select } from "antd";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 
-const Editvisitor = ({ handleClose, editid }) => {
+const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false); // Add a loading state
   const [formData, setFormdata] = useState({
@@ -149,7 +149,6 @@ const Editvisitor = ({ handleClose, editid }) => {
       }
 
       handleClose();
-      window.location.reload();
     } catch (error) {
       console.error("Error updating visitor:", error);
     }
