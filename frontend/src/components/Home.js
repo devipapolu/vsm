@@ -365,7 +365,7 @@ const Home = () => {
                 ))
             ) : (
               <div className="w-full text-center text-lg text-gray-500 p-2">
-                No employees found.
+               No Visitors found....
               </div>
             )}
           </div>

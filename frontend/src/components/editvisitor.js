@@ -13,6 +13,7 @@ const Editvisitor = ({ handleClose, editid }) => {
     visitingperson: "",
     photo: "",
   });
+  const [errors, setErrors] = useState({}); // State for form validation errors
 
   // Options for the purpose of visit
   const purposeVisitOptions = [
@@ -80,11 +81,57 @@ const Editvisitor = ({ handleClose, editid }) => {
     }));
   };
 
+  // Validation function
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    // Validate Fullname
+    if (!formData.name.trim()) {
+      newErrors.name = "Fullname is required.";
+      isValid = false;
+    }
+
+    // Validate Mobile
+    if (!formData.mobile.trim()) {
+      newErrors.mobile = "Mobile number is required.";
+      isValid = false;
+    } else if (!/^\d{10}$/.test(formData.mobile)) {
+      newErrors.mobile = "Mobile number must be a 10-digit number.";
+      isValid = false;
+    }
+
+    // Validate Address
+    if (!formData.address.trim()) {
+      newErrors.address = "Address is required.";
+      isValid = false;
+    }
+
+    // Validate Visiting Person
+    if (!formData.visitingperson) {
+      newErrors.visitingperson = "Visiting person is required.";
+      isValid = false;
+    }
+
+    // Validate Purpose of Visit
+    if (!formData.visitingpurpose) {
+      newErrors.visitingpurpose = "Purpose of visit is required.";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // console.log("formsubmit", formData);
+    // Validate the form before submitting
+    if (!validateForm()) {
+      return; // Stop if validation fails
+    }
+
     try {
       const response = await axios.put(
         `http://127.0.0.1:8090/api/updatevisitor/${editid}`,
@@ -94,11 +141,11 @@ const Editvisitor = ({ handleClose, editid }) => {
       const responseData = response.data;
 
       if (responseData.message === "No changes were made.") {
-        alert(" no changes made");
+        alert("No changes made");
       }
 
       if (responseData.message === "Visitor updated successfully.") {
-        alert("updated sucessfully");
+        alert("Updated successfully");
       }
 
       handleClose();
@@ -133,6 +180,9 @@ const Editvisitor = ({ handleClose, editid }) => {
             value={formData.name}
             onChange={handleInputChange}
           />
+          {errors.name && (
+            <p className="text-red-500 text-sm">{errors.name}</p>
+          )}
         </div>
 
         {/* Mobile Input */}
@@ -146,6 +196,9 @@ const Editvisitor = ({ handleClose, editid }) => {
             value={formData.mobile}
             onChange={handleInputChange}
           />
+          {errors.mobile && (
+            <p className="text-red-500 text-sm">{errors.mobile}</p>
+          )}
         </div>
 
         {/* Address Input */}
@@ -159,6 +212,9 @@ const Editvisitor = ({ handleClose, editid }) => {
             value={formData.address}
             onChange={handleInputChange}
           />
+          {errors.address && (
+            <p className="text-red-500 text-sm">{errors.address}</p>
+          )}
         </div>
 
         {/* Visiting Person Select */}
@@ -174,6 +230,9 @@ const Editvisitor = ({ handleClose, editid }) => {
             options={employeeOptions}
             loading={loading} // Pass the loading state to show the loading spinner
           />
+          {errors.visitingperson && (
+            <p className="text-red-500 text-sm">{errors.visitingperson}</p>
+          )}
         </div>
 
         {/* Purpose of Visit Select */}
@@ -187,6 +246,9 @@ const Editvisitor = ({ handleClose, editid }) => {
             placeholder="Select Purpose"
             options={purposeVisitOptions}
           />
+          {errors.visitingpurpose && (
+            <p className="text-red-500 text-sm">{errors.visitingpurpose}</p>
+          )}
         </div>
 
         {/* Buttons */}
