@@ -8,7 +8,8 @@ async function Updatecheckout(req, res) {
       {
         $set: {
           checkouttime: new Date(), // Set checkinTime to the current time
-          checkout: true, // Set checkin status to true
+          checkout: true,
+          status: "checked-out",
         },
       }
     );

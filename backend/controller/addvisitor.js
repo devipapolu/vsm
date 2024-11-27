@@ -12,6 +12,7 @@ async function Addvisitor(req, res) {
     checkin,
     checkouttime,
     checkout,
+    status,
   } = req.body;
 
   // Check for missing required fields
@@ -43,6 +44,7 @@ async function Addvisitor(req, res) {
       checkin: false,
       checkouttime,
       checkout: false,
+      status: "pending",
     };
 
     // Save the new visitor to the database

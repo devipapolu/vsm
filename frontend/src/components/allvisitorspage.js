@@ -181,7 +181,10 @@ const Allvisitorspage = () => {
 
                         <td className="px-4 py-2">{employee.mobile}</td>
 
-                        <td className="px-1 py-2 hover:pointer-events-none">
+                        <td className="px-4 py-2 hover:pointer-events-none ">
+                          {/* <div className="text-sm inline-block bg-orange-200 px-2 rounded-full">
+                            {employee.status}
+                          </div> */}
                           {!employee.checkin && !employee.checkout ? (
                             <div className="text-sm inline-block bg-orange-200 py-1 px-2 rounded-full">
                               Pending

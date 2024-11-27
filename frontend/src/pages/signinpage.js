@@ -104,6 +104,8 @@ const Signin = () => {
           expires: new Date(Date.now() + 86400000),
         });
 
+        console.log("role", responseData.user.role);
+
         navigate("/");
       } else {
         setGeneralError(responseData.message || "Login failed");
