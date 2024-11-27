@@ -1,30 +1,12 @@
 import React from "react";
-import { Modal, Button } from "antd";
+import Header from "../components/Header";
 
-const Profilepage = ({ open, handleOk, handleCancel }) => {
+const Profilepage = () => {
   return (
-    <Modal
-      open={open}
-      title="Delete visitor"
-      onOk={handleOk}
-      onCancel={handleCancel}
-      footer={[
-        <Button key="cancel" onClick={handleCancel}>
-          Cancel
-        </Button>,
-        <Button
-          key="delete"
-          type="primary"
-          danger
-          onClick={handleOk}
-          className="bg-red-600"
-        >
-          Delete
-        </Button>,
-      ]}
-    >
-      <p>You are about to delete the visitor, are you sure?</p>
-    </Modal>
+    <div>
+      <Header />
+      <div>Profilepage</div>
+    </div>
   );
 };
 

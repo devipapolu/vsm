@@ -146,6 +146,8 @@ const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
 
       if (responseData.message === "Visitor updated successfully.") {
         alert("Updated successfully");
+        getload();
+        getvisitors();
       }
 
       handleClose();
@@ -179,9 +181,7 @@ const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
             value={formData.name}
             onChange={handleInputChange}
           />
-          {errors.name && (
-            <p className="text-red-500 text-sm">{errors.name}</p>
-          )}
+          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         </div>
 
         {/* Mobile Input */}

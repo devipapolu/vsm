@@ -148,7 +148,6 @@ const Signin = () => {
               placeholder="Enter your email"
               value={email}
               onChange={handleEmailChange}
-              required
             />
             {/* Reserve space for email error */}
             <div className="h-5  ">
@@ -175,7 +174,6 @@ const Signin = () => {
               placeholder="Enter your password"
               value={password}
               onChange={handlePasswordChange}
-              required
             />
             {/* Reserve space for password error */}
             <div className="h-5">
@@ -188,7 +186,8 @@ const Signin = () => {
           <button
             type="submit"
             className={`w-full py-2 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 ${
-              (loading || emailError || passwordError) && "opacity-50 cursor-not-allowed"
+              (loading || emailError || passwordError) &&
+              "opacity-50 cursor-not-allowed"
             }`}
             disabled={loading || emailError || passwordError}
           >

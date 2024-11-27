@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { Image } from "antd";
+import { Image, Skeleton } from "antd";
 
 function Employeedetails() {
   const [searchParams] = useSearchParams();
@@ -12,6 +12,7 @@ function Employeedetails() {
   const [visitors, setVisitors] = useState([]);
   const [employee, setEmployee] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // To handle modal state
+  const [loadingImage, setLoadingImage] = useState(true);
   const [selectedImage, setSelectedImage] = useState(""); // To store the image URL
 
   // Fetch employee details by ID
@@ -85,6 +86,9 @@ function Employeedetails() {
     setIsModalOpen(false);
   };
 
+  const handleImageLoad = () => {
+    setLoadingImage(false); // Set loading to false when the image has loaded
+  };
   return (
     <div>
       <Header />
@@ -99,17 +103,21 @@ function Employeedetails() {
             <div className="mb-5">
               {employee?.map((emp) => (
                 <div key={emp._id}>
-                  {/* Clickable image to open modal */}
-
-                  <Image width={200} src={emp.profile} />
-                  {/* <img
-                    alt="Employee"
+                  {loadingImage && (
+                    <div>
+                      <Skeleton.Image
+                        style={{ height: "208px", width: "200px" }}
+                      />
+                    </div>
+                  )}
+                  <Image
+                    width={200}
+                    onLoad={handleImageLoad}
                     src={emp.profile}
-                    className="rounded-xl cursor-pointer"
-                    width={"150px"}
-                    height={"150px"}
-                    onClick={() => openModal(emp.profile)} // Open the modal with the large image
-                  /> */}
+                    className=" max-h-52"
+                    // style={{ maxHeight: "220px" }}
+                  />
+
                   <div className="text-2xl font-bold my-4">{emp.name}</div>
                   <div className="grid lg:grid-cols-3 sm:grid-cols-1 md:grid-cols-2">
                     <div>
@@ -199,7 +207,12 @@ function Employeedetails() {
                           Checkin time
                         </div>
                         <div className="my-2 font-semibold">
-                          {formatDate(visitor.checkinTime)}
+                          {!visitor.checkinTime ? (
+                            <div>-</div>
+                          ) : (
+                            <div>{formatDate(visitor.checkinTime)} </div>
+                          )}
+                          {/* {formatDate(visitor.checkinTime)} */}
                         </div>
                       </div>
                       <div>
@@ -207,7 +220,12 @@ function Employeedetails() {
                           Checkout time
                         </div>
                         <div className="my-2 font-semibold">
-                          {formatDate(visitor.checkouttime)}
+                          {!visitor.checkouttime ? (
+                            <div>-</div>
+                          ) : (
+                            <div>{formatDate(visitor.checkouttime)} </div>
+                          )}
+                          {/* {formatDate(visitor.checkouttime)} */}
                         </div>
                       </div>
                     </div>

@@ -1,6 +1,7 @@
 import { Button, Select } from "antd";
 import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Webcam from "react-webcam"; // Import react-webcam
 
 const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
@@ -9,6 +10,17 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
   const [photo, setPhoto] = useState(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const webcamRef = useRef(null);
+  const [error, setError] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/employees") {
+      setError(true);
+    }
+    if (location.pathname === "/profile") {
+      setError(true);
+    }
+  }, [location.pathname]);
 
   const [formData, setFormdata] = useState({
     name: "",
@@ -237,8 +249,13 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
           visitingperson: "",
           photo: "",
         });
-        Getvisitors();
-        getload();
+
+        if (!error) {
+          Getvisitors();
+          getload();
+        }
+        // Getvisitors();
+        // getload();
         // window.location.reload();
       }
 
