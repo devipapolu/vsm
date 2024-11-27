@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
-import { Button, Dropdown, Select, Space } from "antd";
+import { Button, Dropdown, Select, Skeleton, Space } from "antd";
 import Allvisitorspage from "./allvisitorspage";
 import { DownOutlined } from "@ant-design/icons";
 import AddVisitorPage from "../pages/Addvisitorpage";
@@ -26,6 +26,7 @@ const Home = () => {
   const [searchTerm, setSearchitem] = useState("");
   const [visitors, setVisitors] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Track modal state
+  const [loading, setLoading] = useState(true);
 
   const [openmodal, setOpenmodal] = useState(false);
   const [deletemodal, setDeletemodal] = useState(false);
@@ -91,10 +92,12 @@ const Home = () => {
   }, [cookies.token, navigate, dispatch]);
 
   const getvisitors = async () => {
+    setLoading(true);
     await axios
       .get("http://127.0.0.1:8090/api/getvisitors")
       .then((response) => {
         setVisitors(response.data);
+        setLoading(false);
       });
   };
 
@@ -103,13 +106,16 @@ const Home = () => {
   }, []);
 
   // Filter pending users that haven't checked in or out
-  const pendingusers = visitors?.filter(
-    (pvisitor) => !pvisitor.checkin || !pvisitor.checkout
-  );
+  // const pendingusers = visitors?.filter(
+  //   (pvisitor) => !pvisitor.checkin || !pvisitor.checkout
+  // );
 
   // Memoize the filtered search results to optimize performance
   const filteredVisitors = useMemo(() => {
-    let filtered = pendingusers;
+    setLoading(true);
+    let filtered = visitors?.filter(
+      (pvisitor) => !pvisitor.checkin || !pvisitor.checkout
+    );
 
     // Filter by search term
     if (searchTerm !== "") {
@@ -125,8 +131,10 @@ const Home = () => {
       );
     }
 
+    setLoading(false);
+
     return filtered;
-  }, [searchTerm, pendingusers, onChangepurpose]);
+  }, [searchTerm, onChangepurpose, visitors]);
 
   useEffect(() => {
     setLatestpersons(filteredVisitors);
@@ -238,9 +246,9 @@ const Home = () => {
         <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5">
           {/* Search Input and Add Employee Button */}
           <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-1 gap-2">
-            <div className="lg:w-4/5 md:w-4/6 sm:w-full ">
+            <div className="lg:w-4/5 md:w-4/5 sm:w-full mx-2 ">
               <InputGroup style={{ width: "100%", height: 40 }}>
-                <InputGroup.Addon className="bg-slate-100">
+                <InputGroup.Addon className="bg-slate-100 ">
                   <SearchIcon />
                 </InputGroup.Addon>
                 <Input
@@ -252,7 +260,7 @@ const Home = () => {
             </div>
 
             {/* Select Buttons */}
-            <div className="flex flex-col  justify-between md:w-1/6 gap-2 md:flex-row lg:flex-row lg:w-1/5 md:pr-1 ">
+            <div className="flex flex-col px-2  justify-between md:w-1/5 gap-2 md:flex-row lg:flex-row lg:w-1/5 md:pr-1 ">
               <div className="w-full">
                 <Select
                   placeholder="Purpose"
@@ -267,118 +275,198 @@ const Home = () => {
         </div>
 
         {/* Visitors profile */}
-        <div className="">
-          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
-            {latestpersons?.length > 0 ? (
-              latestpersons
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort by createdAt, descending
-                .map((employee) => (
-                  <div
-                    key={employee._id}
-                    className="bg-white rounded-lg pb-3 border overflow-hidden transform transition-all duration-300 hover:shadow-xl"
-                  >
-                    <div className="relative h-44 border-b-2 p-4">
-                      <img
-                        alt="profile"
-                        src={employee.photo}
-                        className="w-full h-full object-cover rounded-md"
-                      />
-                    </div>
-                    <div className="px-2 pt-1 text-start">
-                      <div className=" flex flex-col justify-between items-start">
-                        <h3 className="text-xl font-semibold text-gray-800 truncate">
-                          {employee.name}
-                        </h3>
-                        <div className="bg-violet-200 px-2 rounded-md  text-secondary">
-                          {employee.status}
+        <div className=" min-h-72">
+          {loading ? (
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+              <div className="shadow-sm rounded-md w-full p-2">
+                <div className="w-full h-40  ">
+                  <Skeleton.Image
+                    style={{ width: "248px", height: "144px" }}
+                    active
+                    className=" w-full"
+                  />
+                </div>
+                <div className="">
+                  <Skeleton.Input
+                    active
+                    className="h-10"
+                    style={{ width: "245px" }}
+                  />
+                </div>
+                <div className=" mt-4">
+                  <Skeleton />
+                </div>
+                <div className=" flex flex-row gap-6 mt-2">
+                  <div className=" mt-3">
+                    <Skeleton.Button
+                      active
+                      style={{ height: "45px", width: "100px" }}
+                    />
+                  </div>
+                  <div className=" mt-3">
+                    <Skeleton.Button
+                      active
+                      style={{ height: "45px", width: "40px" }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="shadow-sm rounded-md w-full p-2">
+                <div className="w-full h-40  ">
+                  <Skeleton.Image
+                    style={{ width: "248px", height: "144px" }}
+                    active
+                    className=" w-full"
+                  />
+                </div>
+                <div className="">
+                  <Skeleton.Input
+                    active
+                    className="h-10"
+                    style={{ width: "245px" }}
+                  />
+                </div>
+                <div className=" mt-4">
+                  <Skeleton />
+                </div>
+                <div className=" flex flex-row gap-6 mt-2">
+                  <div className=" mt-3">
+                    <Skeleton.Button
+                      active
+                      style={{ height: "45px", width: "100px" }}
+                    />
+                  </div>
+                  <div className=" mt-3">
+                    <Skeleton.Button
+                      active
+                      style={{ height: "45px", width: "40px" }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-3 px-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+              {latestpersons?.length > 0 ? (
+                latestpersons
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort by createdAt, descending
+                  .map((employee) => (
+                    <div
+                      key={employee._id}
+                      className="bg-white rounded-lg pb-3 border overflow-hidden transform transition-all duration-300 hover:shadow-xl"
+                    >
+                      <div className=" h-40 border-b-2 p-2">
+                        <div className=" relative w-full h-full">
+                          <img
+                            alt="profile"
+                            src={employee.photo}
+                            className="w-full h-full object-cover rounded-md"
+                          />
+                          <div className="bg-violet-200 text-sm px-1 rounded-md mt-1 me-1  text-secondary absolute top-0 right-0">
+                            {employee.status}
+                          </div>
                         </div>
                       </div>
-                      <div className="text-sm text-gray-600 mt-3">Visiting</div>
-                      <div className="text-md text-gray-900">
-                        {employee.visitingperson}
-                      </div>
-                      <div className="text-sm text-gray-600 mt-3">
-                        Purpose of visit
-                      </div>
-                      <div className="text-md text-gray-900">
-                        {employee.visitingpurpose}
-                      </div>
+                      <div className="px-2 pt-1 text-start">
+                        <div className=" flex flex-col justify-between items-start">
+                          <h3 className="text-xl font-semibold text-gray-800 truncate">
+                            {employee.name}
+                          </h3>
+                          {/* <div className="bg-violet-200 px-2 rounded-md  text-secondary">
+                            {employee.status}
+                          </div> */}
+                        </div>
+                        <div className="text-sm text-gray-600 mt-3">
+                          Visiting
+                        </div>
+                        <div className="text-md text-gray-900">
+                          {employee.visitingperson}
+                        </div>
+                        <div className="text-sm text-gray-600 mt-3">
+                          Purpose of visit
+                        </div>
+                        <div className="text-md text-gray-900">
+                          {employee.visitingpurpose}
+                        </div>
 
-                      <div className="text-sm text-gray-600 mt-3">
-                        Created time
-                      </div>
-                      <div className="text-md text-gray-900">
-                        {formatDate(employee.createdAt)}
-                      </div>
+                        <div className="text-sm text-gray-600 mt-3">
+                          Created time
+                        </div>
+                        <div className="text-md text-gray-900">
+                          {formatDate(employee.createdAt)}
+                        </div>
 
-                      <div className="flex flex-row gap-3">
-                        {/* Check-in button */}
-                        {!employee.checkin && (
-                          <button
-                            className="mt-3 p-2 rounded-md text-white bg-green-400"
-                            onClick={() => handleCheckin(employee._id)}
+                        <div className="flex flex-row gap-3">
+                          {/* Check-in button */}
+                          {!employee.checkin && (
+                            <button
+                              className="mt-3 p-2 rounded-md text-white bg-green-400"
+                              onClick={() => handleCheckin(employee._id)}
+                            >
+                              Check in
+                            </button>
+                          )}
+
+                          {/* Check-out button */}
+                          {!employee.checkout && employee.checkin && (
+                            <button
+                              className="mt-3 p-2 bg-teal-400 rounded-md text-white"
+                              onClick={() => handleCheckout(employee._id)}
+                            >
+                              Check out
+                            </button>
+                          )}
+
+                          {/* Dropdown button */}
+                          <Dropdown
+                            menu={{
+                              items,
+                              onClick: (e) =>
+                                handleMenuClick(employee._id, e, employee.name),
+                            }}
+                            trigger={["click"]}
                           >
-                            Check in
-                          </button>
-                        )}
-
-                        {/* Check-out button */}
-                        {!employee.checkout && employee.checkin && (
-                          <button
-                            className="mt-3 p-2 bg-teal-400 rounded-md text-white"
-                            onClick={() => handleCheckout(employee._id)}
-                          >
-                            Check out
-                          </button>
-                        )}
-
-                        {/* Dropdown button */}
-                        <Dropdown
-                          menu={{
-                            items,
-                            onClick: (e) =>
-                              handleMenuClick(employee._id, e, employee.name),
-                          }}
-                          trigger={["click"]}
-                        >
-                          <button className="mt-3 py-2 px-3 bi bi-three-dots border text-black rounded-md"></button>
-                        </Dropdown>
+                            <button className="mt-3 py-2 px-3 bi bi-three-dots border text-black rounded-md"></button>
+                          </Dropdown>
+                        </div>
                       </div>
+                      <Modal open={deletemodal} onClose={handledeleteClose}>
+                        <Modal.Header>
+                          <Modal.Title>Delete Visitor</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <p>
+                            You are about to delete the visitor, are you sure?
+                          </p>
+                        </Modal.Body>
+                        <Modal.Footer className=" flex gap-3 justify-end">
+                          {/* Cancel button to close modal */}
+                          <Button
+                            onClick={handledeleteClose}
+                            appearance="subtle"
+                          >
+                            Cancel
+                          </Button>
+
+                          {/* Delete button */}
+                          <button
+                            onClick={handleOk} // Handle deletion
+                            className="bg-red-600 text-white border px-3 py-1 rounded-md hover:bg-gray-400 hover:text-black" // Tailwind CSS classes for red button and text
+                            appearance="primary"
+                          >
+                            Delete
+                          </button>
+                        </Modal.Footer>
+                      </Modal>
                     </div>
-                    <Modal open={deletemodal} onClose={handledeleteClose}>
-                      <Modal.Header>
-                        <Modal.Title>Delete Visitor</Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        <p>
-                          You are about to delete the visitor, are you sure?
-                        </p>
-                      </Modal.Body>
-                      <Modal.Footer className=" flex gap-3 justify-end">
-                        {/* Cancel button to close modal */}
-                        <Button onClick={handledeleteClose} appearance="subtle">
-                          Cancel
-                        </Button>
-
-                        {/* Delete button */}
-                        <button
-                          onClick={handleOk} // Handle deletion
-                          className="bg-red-600 text-white border px-3 py-1 rounded-md hover:bg-gray-400 hover:text-black" // Tailwind CSS classes for red button and text
-                          appearance="primary"
-                        >
-                          Delete
-                        </button>
-                      </Modal.Footer>
-                    </Modal>
-                  </div>
-                ))
-            ) : (
-              <div className="w-full text-center text-lg text-gray-500 p-2">
-               No Visitors found....
-                No Visitors found.
-              </div>
-            )}
-          </div>
+                  ))
+              ) : (
+                <div className="w-full text-center text-lg text-gray-500 p-2">
+                  No Visitors found....
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <Modal
           size={"lg:calc(100% - 100px)"}
