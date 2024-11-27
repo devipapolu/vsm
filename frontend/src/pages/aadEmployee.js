@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 
-const Addemployee = ({ handleClose }) => {
+const Addemployee = ({ handleClose, Getemployees }) => {
   const [filename, setFlename] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -176,7 +176,8 @@ const Addemployee = ({ handleClose }) => {
             position: "",
           });
           handleClose();
-          window.location.reload(); // Close modal after submission
+          Getemployees();
+          // window.location.reload(); // Close modal after submission
         }
       } catch (error) {
         console.error("Error creating employee:", error);

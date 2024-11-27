@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Input, InputGroup } from "rsuite";
+import { DatePicker, Input, InputGroup } from "rsuite";
 import SearchIcon from "@rsuite/icons/Search";
 import { Select } from "antd";
 import axios from "axios";
@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
 import { useNavigate } from "react-router-dom";
 
-const Allvisitorspage = () => {
+const Allvisitorspage = ({ getload }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
@@ -52,7 +52,20 @@ const Allvisitorspage = () => {
 
   useEffect(() => {
     getvisitors();
-  }, []);
+  }, [getload]);
+
+  const [monthselect, setMonthselect] = useState(10);
+
+  // Function to extract the month from the `createdAt` date string
+  const getMonthFromDate = (dateString) => {
+    const date = new Date(dateString); // Convert ISO string to Date object
+    return date.getMonth(); // Get the month (0 for January, 1 for February, ..., 10 for November)
+  };
+
+  // Filtering visitors based on selected month
+  const monthfiltered = visitors.filter(
+    (person) => getMonthFromDate(person.createdAt) === monthselect
+  );
 
   const filteredVisitors = useMemo(() => {
     let filtered = visitors;
@@ -66,8 +79,17 @@ const Allvisitorspage = () => {
         (person) => person.visitingpurpose === onChangepurpose
       );
     }
+
+    // if (monthselect) {
+    //   filtered = filtered.filter(
+    //     (person) => getMonthFromDate(person.createdAt) === monthselect
+    //   );
+    // }
+
     return filtered;
   }, [searchTerm, onChangepurpose, visitors]);
+
+  console.log("monthfiltered", monthfiltered);
 
   useEffect(() => {
     setLatestpersons(filteredVisitors);
@@ -113,7 +135,7 @@ const Allvisitorspage = () => {
         {/* Search Input */}
         <div className="lg:flex lg:flex-row lg:items-center  lg:justify-between w-full mt-5">
           <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-1 gap-2">
-            <div className="lg:w-4/5 md:w-4/6 sm:w-full ">
+            <div className="lg:w-4/6 md:w-4/6 sm:w-full ">
               <InputGroup style={{ width: "100%", height: 40 }}>
                 <InputGroup.Addon className="bg-slate-100">
                   <SearchIcon />
@@ -126,7 +148,12 @@ const Allvisitorspage = () => {
               </InputGroup>
             </div>
 
-            <div className="w-full lg:w-1/5 md:w-1/5">
+            <div className="w-full gap-2 flex flex-row lg:w-2/6 md:w-1/5">
+              <DatePicker
+                format="yyyy-MM"
+                editable={false}
+                className=" h-10 w-full"
+              />
               <Select
                 placeholder="Purpose"
                 optionFilterProp="label"

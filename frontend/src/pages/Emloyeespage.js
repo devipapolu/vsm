@@ -135,7 +135,10 @@ const Emloyeespage = () => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Addemployee handleClose={handleClose} />
+            <Addemployee
+              handleClose={handleClose}
+              Getemployees={GetEmployees}
+            />
           </Modal.Body>
           <Modal.Footer></Modal.Footer>
         </Modal>
