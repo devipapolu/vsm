@@ -3,7 +3,7 @@ import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam"; // Import react-webcam
 
-const AddVisitorPage = ({ handleClose }) => {
+const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
   const [employees, setEmployees] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [photo, setPhoto] = useState(null);
@@ -228,7 +228,7 @@ const AddVisitorPage = ({ handleClose }) => {
 
       if (responseData.success) {
         alert("visitor added successfully");
-        // handleClose();
+        handleClose();
         setFormdata({
           name: "",
           mobile: "",
@@ -237,7 +237,9 @@ const AddVisitorPage = ({ handleClose }) => {
           visitingperson: "",
           photo: "",
         });
-        window.location.reload();
+        Getvisitors();
+        getload();
+        // window.location.reload();
       }
 
       if (responseData.error) {

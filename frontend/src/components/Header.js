@@ -11,7 +11,7 @@ import { useCookies } from "react-cookie";
 import { Button, Modal } from "rsuite";
 import Addvisitorpage from "../pages/Addvisitorpage";
 
-const Header = () => {
+const Header = ({ Getvisitors, getload }) => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -223,7 +223,11 @@ const Header = () => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Addvisitorpage handleClose={handleClose} />
+            <Addvisitorpage
+              handleClose={handleClose}
+              Getvisitors={Getvisitors}
+              getload={getload}
+            />
           </Modal.Body>
           <Modal.Footer></Modal.Footer>
         </Modal>
