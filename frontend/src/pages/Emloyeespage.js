@@ -88,6 +88,10 @@ const Emloyeespage = () => {
     GetEmployees(); // Fetch all employees when component mounts
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div style={{}} className="">
       <Header />
@@ -156,7 +160,7 @@ const Emloyeespage = () => {
 
         {loading ? (
           <div className="pb-10 w-full mt-3 px-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            <div className="border rounded-md w-full p-2">
+            <div className="shadow-sm rounded-md w-full p-2">
               <div className="w-full h-48 text-center ">
                 <Skeleton.Image
                   active
