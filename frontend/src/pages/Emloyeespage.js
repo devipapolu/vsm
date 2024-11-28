@@ -93,7 +93,7 @@ const Emloyeespage = () => {
   }, []);
 
   return (
-    <div style={{}} className="">
+    <div style={{}} className=" pt-28">
       <Header />
       <div className="lg:px-28 md:px-2 sm:px-2 w-full">
         <div className="font-bold font-sans text-2xl mt-3 w-full">

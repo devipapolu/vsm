@@ -30,6 +30,7 @@
     "rsuite": "^5.74.2",
     "toastify": "^2.0.1",
     "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5",
     "yup": "^1.4.0"
   },
   "scripts": {

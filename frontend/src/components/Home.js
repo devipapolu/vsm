@@ -40,6 +40,8 @@ const Home = () => {
 
   const [reloadVisitors, setReloadVisitors] = useState(false);
 
+  console.log("user", user);
+
   const handleUserAdded = () => {
     setReloadVisitors((prev) => !prev); // Toggle to trigger refresh
   };
@@ -277,7 +279,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-
         {/* Visitors profile */}
         <div className=" min-h-72">
           {loading ? (
