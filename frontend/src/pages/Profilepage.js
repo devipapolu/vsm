@@ -1,91 +1,107 @@
-import React, { useState } from 'react'
-import Header from '../components/Header'
+import React, { useState } from 'react';
+import Header from '../components/Header';
 import { Form, Button, ButtonToolbar, Schema, Panel } from 'rsuite';
-import RemindOutlineIcon from '@rsuite/icons/RemindOutline';
 import { Divider } from 'antd';
 
+// Define validation schema for both forms
 const { StringType } = Schema.Types;
-const model = Schema.Model({
-  name: StringType().isRequired('This field is required.'),
-  email: StringType()
-    .isEmail('Please enter a valid email address.')
-    .isRequired(  "This filed is REquired"),
-    password:StringType("New password is Required")
+const profileModel = Schema.Model({
+  name: StringType().isRequired('Username is required'),
+  email: StringType().isEmail('Please enter a valid email address').isRequired('Email is required'),
+});
+
+const passwordModel = Schema.Model({
+  oldPassword: StringType().isRequired('Old password is required'),
+  newPassword: StringType().isRequired('New password is required'),
 });
 
 function TextField(props) {
   const { name, label, accepter, ...rest } = props;
   return (
     <Form.Group controlId={`${name}-3`}>
-      <Form.ControlLabel>{label} </Form.ControlLabel>
+      <Form.ControlLabel>{label}</Form.ControlLabel>
       <Form.Control name={name} accepter={accepter} {...rest} />
     </Form.Group>
   );
 }
 
 function Profilepage() {
+  // State for both forms
+  const [profileFormValue, setProfileFormValue] = useState({});
+  const [passwordFormValue, setPasswordFormValue] = useState({});
 
-const [formValue,setform]=useState({})
+  // Handle Profile Form submission
+  const handleProfileSubmit = (value) => {
+    console.log("Profile Form Submitted: ", value); // Log the profile form values
+  };
 
+  // Handle Password Form submission
+  const handlePasswordSubmit = (value) => {
+    console.log("Password Form Submitted: ", value); // Log the password form values
+  };
 
-
-function handlesubmit(event){
-  setform(event)
-}
-
-function handlechange(value) {
-  console.log(value)
-  
-}
   return (
-   <>
-   <div className=''>
-  <Header/>
-   </div>
-  <div className=' pt-40'>
-  <div className='main_container  flex justify-center items-center' style={{height:"100vh", width:"100%"}}>
-<div className='card px-2   w-96 '>
-<h5 className='mt-2'>My profile</h5>
-<div className='card-body  '>
-<Form model={model} onSubmit={handlesubmit} formValue={formValue}>
-      <TextField name="name"  label="Username"/>
-      <TextField name="email" label="Email" />
-      <ButtonToolbar>
-        <Button appearance="primary" type="submit" >
-          Update profile
-        </Button>
-      </ButtonToolbar>
-    </Form>
-    <Divider
-      style={{
-        borderColor: '#7cb305',
-      }}
-    >
-    </Divider>
-    <div className='px-2 card-body '>
-<div className=''>
-  <p>Change Password</p>
+    <>
+      <div className="">
+        <Header />
+      </div>
+      <div className="pt-40">
+        <div
+          className="main_container flex justify-center items-center"
+          style={{ height: '100vh', width: '100%' }}
+        >
+          <div className="card px-2 w-96">
+            <h5 className="mt-2">My Profile</h5>
+            <div className="card-body">
+              {/* Profile Form */}
+              <Form
+                model={profileModel}
+                formValue={profileFormValue}
+                onChange={setProfileFormValue}
+                onSubmit={handleProfileSubmit}
+              >
+                <TextField name="name" label="Username" />
+                <TextField name="email" label="Email" />
+                <ButtonToolbar>
+                  <Button appearance="primary" type="submit">
+                    Update Profile
+                  </Button>
+                </ButtonToolbar>
+              </Form>
 
-  <Form model={model} onChange={handlechange} onSubmit={handlesubmit} formValue={formValue}>
-      <TextField name="name" label="old Password" />
-      <TextField name="email" label="Change password" />
-      <ButtonToolbar>
-        <Button appearance="primary" type="submit" >
-          Update password
-        </Button>
-      </ButtonToolbar>
-    </Form>
-</div>
-</div>
-</div>
+              <Divider
+                style={{
+                  borderColor: '#7cb305',
+                }}
+              />
 
+              <div className="px-2 card-body">
+                <div>
+                  <p>Change Password</p>
 
-
-</div>
-   </div> 
-  </div>
-   </>
-  )
+                  {/* Password Form */}
+                  <Form
+                    model={passwordModel}
+                    formValue={passwordFormValue}
+                    onChange={setPasswordFormValue}
+                    onSubmit={handlePasswordSubmit}
+                  >
+                    <TextField name="oldPassword" label="Old Password" />
+                    <TextField name="newPassword" label="New Password" />
+                    <ButtonToolbar>
+                      <Button appearance="primary" type="submit">
+                        Update Password
+                      </Button>
+                    </ButtonToolbar>
+                  </Form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
 
-export default Profilepage
+export default Profilepage;

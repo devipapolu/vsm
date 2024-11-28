@@ -113,13 +113,8 @@ const Header = ({ Getvisitors, getload }) => {
                 Employees
               </Link>
               <div
-                // to="/addvisitor"
-                // className={
-                //   location.pathname === "/addvisitor" ? "active-link" : ""
-                // }
-                // style={{ textDecoration: "none" }}
-                className=" cursor-pointer"
-                onClick={handleOpen}
+                className="cursor-pointer"
+                onClick={handleOpen} // Open Add Visitor modal
               >
                 Add Visitor
               </div>
@@ -178,7 +173,7 @@ const Header = ({ Getvisitors, getload }) => {
                     to="/"
                     className={location.pathname === "/" ? "active-link" : ""}
                     style={{ textDecoration: "none" }}
-                    onClick={onCloseDrawer}
+                    onClick={onCloseDrawer} // Close drawer after navigation
                   >
                     Dashboard
                   </Link>
@@ -188,18 +183,13 @@ const Header = ({ Getvisitors, getload }) => {
                       location.pathname === "/employees" ? "active-link" : ""
                     }
                     style={{ textDecoration: "none" }}
-                    onClick={onCloseDrawer}
+                    onClick={onCloseDrawer} // Close drawer after navigation
                   >
                     Employees
                   </Link>
                   <div
-                    // to="/addvisitor"
-                    // className={
-                    //   location.pathname === "/addvisitor" ? "active-link" : ""
-                    // }
-                    // style={{ textDecoration: "none" }}
-                    className=" cursor-pointer"
-                    onClick={handleaddvisitor}
+                    className="cursor-pointer"
+                    onClick={handleaddvisitor} // Open modal
                   >
                     Add Visitor
                   </div>
@@ -209,8 +199,7 @@ const Header = ({ Getvisitors, getload }) => {
           </div>
         </header>
 
-        {/*Add Modal For Add Visitor */}
-
+        {/* Add Modal For Add Visitor */}
         <Modal
           size={"lg:calc(100% - 100px)"}
           open={openmodal}
@@ -219,7 +208,7 @@ const Header = ({ Getvisitors, getload }) => {
         >
           <Modal.Header>
             <Modal.Title>
-              <div className="font-bold text-center"> Add a New visitor</div>
+              <div className="font-bold text-center"> Add a New Visitor</div>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -229,7 +218,6 @@ const Header = ({ Getvisitors, getload }) => {
               getload={getload}
             />
           </Modal.Body>
-          <Modal.Footer></Modal.Footer>
         </Modal>
 
         {/* CSS for Active Link Styling */}

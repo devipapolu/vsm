@@ -7,45 +7,37 @@ import Signin from "../pages/signinpage";
 import Profilepage from "../pages/Profilepage";
 import Employeedetails from "../pages/Employeedetails";
 
-const router = createBrowserRouter(
-  [
-    {
-      path: "/",
-      element: <App />,
-      children: [
-        {
-          path: "",
-          element: <Home />,
-        },
-        {
-          path: "employees",
-          element: <Emloyeespage />,
-        },
-        {
-          path: "addvisitor",
-          element: <Addvisitorpage />,
-        },
-        {
-          path: "signin",
-          element: <Signin />,
-        },
-        {
-          path: "profile",
-          element: <Profilepage />,
-        },
-        {
-          path: "/employedetails",
-          element: <Employeedetails />,
-        },
-      ],
-    },
-  ],
+const router = createBrowserRouter([
   {
-    future: {
-      v7_skipActionErrorRevalidation: true, // Your previous flag
-      v7_normalizeFormMethod: true, // New flag for form method no rmalization
-    },
-  }
-);
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "",
+        element: <Home />,
+      },
+      {
+        path: "employees",
+        element: <Emloyeespage />,
+      },
+      {
+        path: "addvisitor",
+        element: <Addvisitorpage />,
+      },
+      {
+        path: "signin",
+        element: <Signin />,
+      },
+      {
+        path: "profile",
+        element: <Profilepage />,
+      },
+      {
+        path: "employedetails", // Fixed the typo here
+        element: <Employeedetails />,
+      },
+    ],
+  },
+]);
 
 export default router;
