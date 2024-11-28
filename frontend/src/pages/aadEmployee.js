@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Alert } from 'antd';
+import RemindOutlineIcon from '@rsuite/icons/RemindOutline';
 
 const Addemployee = ({ handleClose, Getemployees }) => {
   const [filename, setFlename] = useState(null);
@@ -204,7 +205,8 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           // required
         />
         {submitted && errors.empid && (
-          <div className="text-red-500 mb-3">{errors.empid}</div>
+       <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.empid}</div>
+          
         )}
 
         <div className=" font-semibold">Name:</div>
@@ -220,7 +222,8 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           // required
         />
         {submitted && errors.name && (
-          <div className="text-red-500 mb-3">{errors.name}</div>
+        <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.name}</div>
+          
         )}
         <div className=" font-semibold">Email:</div>
         <input
@@ -235,7 +238,8 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           // required
         />
         {submitted && errors.email && (
-          <div className="text-red-500 mb-3">{errors.email}</div>
+       <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.email}</div>
+          
         )}
 
         <div className=" font-semibold">Mobile:</div>
@@ -251,7 +255,8 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           // required
         />
         {submitted && errors.mobile && (
-          <div className="text-red-500 mb-3">{errors.mobile}</div>
+         <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.mobile}</div>
+          
         )}
 
         <div className=" font-semibold">Position:</div>
@@ -267,7 +272,8 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           // required
         />
         {submitted && errors.position && (
-          <div className="text-red-500 mb-3">{errors.position}</div>
+        <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.position}</div>
+          
         )}
 
         <div className=" font-semibold">Profile:</div>
@@ -295,7 +301,8 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           {filename ? `File Selected: ${filename.name}` : "Choose a file"}
         </label>
         {submitted && errors.profile && (
-          <div className="text-red-500 mb-3">{errors.profile}</div>
+          <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.profile}</div>
+
         )}
 
         <div className=" flex flex-row gap-3">

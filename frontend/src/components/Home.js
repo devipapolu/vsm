@@ -273,7 +273,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-
         {/* Visitors profile */}
         <div className=" min-h-72">
           {loading ? (
