@@ -11,7 +11,7 @@ import { useCookies } from "react-cookie";
 import { Button, Modal } from "rsuite";
 import Addvisitorpage from "../pages/Addvisitorpage";
 
-const Header = ({ Getvisitors, getload }) => {
+const Adminheader = ({ Getvisitors, getload }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -89,7 +89,7 @@ const Header = ({ Getvisitors, getload }) => {
         <header className="flex justify-between items-center">
           {/* Logo Section */}
           <div>
-            <Link to="/">
+            <Link to="/admindashboard">
               <img src={logo} alt="Company Logo" width="200px" height="200px" />
             </Link>
           </div>
@@ -99,16 +99,18 @@ const Header = ({ Getvisitors, getload }) => {
             {/* Navigation Links for Large Screens */}
             <div className="hidden lg:flex gap-10">
               <Link
-                to="/"
-                className={location.pathname === "/" ? "active-link" : ""}
+                to="/admindashboard"
+                className={
+                  location.pathname === "/admindashboard" ? "active-link" : ""
+                }
                 style={{ textDecoration: "none" }}
               >
                 Dashboard
               </Link>
               <Link
-                to="/employees"
+                to="/adminemployees"
                 className={
-                  location.pathname === "/employees" ? "active-link" : ""
+                  location.pathname === "/adminemployees" ? "active-link" : ""
                 }
                 style={{ textDecoration: "none" }}
               >
@@ -239,4 +241,4 @@ const Header = ({ Getvisitors, getload }) => {
   );
 };
 
-export default Header;
+export default Adminheader;
