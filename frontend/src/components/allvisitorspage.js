@@ -3,11 +3,15 @@ import { DatePicker, Input, InputGroup, Loader, Placeholder } from "rsuite";
 import SearchIcon from "@rsuite/icons/Search";
 import { Select } from "antd";
 import axios from "axios";
+import Download from "../../src/images/office.png"
+
 import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
 import { useNavigate } from "react-router-dom";
+
 import * as XLSX from "xlsx";  // Import the xlsx library
+
 
 const Allvisitorspage = ({ getload }) => {
   const navigate = useNavigate();
@@ -229,12 +233,9 @@ const Allvisitorspage = ({ getload }) => {
         </div>
         {/* Download Excel Button */}
         <div className="mt-4">
-          <button
-            onClick={downloadExcel}
-            className="bg-blue-500 text-white py-2 px-4 rounded"
-          >
-            
-          </button>
+          
+         <img src={Download} alt=" download" onClick={downloadExcel} width={"50px"}height={"5s0px"}  ></img>
+          
         </div>
 
         {/* Loading indicator */}
