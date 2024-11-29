@@ -3,11 +3,15 @@ import { DatePicker, Input, InputGroup, Loader, Placeholder } from "rsuite";
 import SearchIcon from "@rsuite/icons/Search";
 import { Select } from "antd";
 import axios from "axios";
+import Download from "../../src/images/office.png"
+
 import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
 import { useNavigate } from "react-router-dom";
-import * as XLSX from "xlsx"; // Import the xlsx library
+
+import * as XLSX from "xlsx";  // Import the xlsx library
+
 
 const Allvisitorspage = ({ getload }) => {
   const navigate = useNavigate();
@@ -173,10 +177,7 @@ const Allvisitorspage = ({ getload }) => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Visitors");
 
     // Generate download link
-    const excelFile = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "binary",
-    });
+    const excelFile = XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
     const buffer = new ArrayBuffer(excelFile.length);
     const view = new Uint8Array(buffer);
     for (let i = 0; i < excelFile.length; i++) {
@@ -188,11 +189,6 @@ const Allvisitorspage = ({ getload }) => {
     link.href = URL.createObjectURL(blob);
     link.download = "visitors.xlsx";
     link.click();
-  };
-
-  const disableFutureDates = (date) => {
-    const today = new Date();
-    return date > today; // Disable future dates
   };
 
   return (
@@ -221,8 +217,7 @@ const Allvisitorspage = ({ getload }) => {
             <div className="w-full gap-2 flex flex-row lg:w-2/6">
               <DatePicker
                 format="yyyy-MM"
-                editable={true}
-                disabledDate={disableFutureDates}
+                editable={false}
                 onChange={handleCalendar}
                 className=" h-10 w-full"
               />
@@ -238,10 +233,9 @@ const Allvisitorspage = ({ getload }) => {
         </div>
         {/* Download Excel Button */}
         <div className="mt-4">
-          <button
-            onClick={downloadExcel}
-            className="bg-blue-500 text-white py-2 px-4 rounded"
-          ></button>
+          
+         <img src={Download} alt=" download" onClick={downloadExcel} width={"50px"}height={"5s0px"}  ></img>
+          
         </div>
 
         {/* Loading indicator */}
@@ -253,7 +247,7 @@ const Allvisitorspage = ({ getload }) => {
         ) : (
           <div className="mt-3 pb-5 w-full overflow-x-auto">
             <table className="min-w-full table-auto border-collapse">
-              <thead className="bg-gray-100">
+              <thead className="bg-gray-100"> 
                 <tr>
                   <th className="px-4 py-2 text-left whitespace-nowrap">
                     Profile
