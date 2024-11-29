@@ -32,7 +32,7 @@ function Employeedetails() {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0); // Scrolls the page to the top
+    window.scrollTo(0, 0);
   }, []);
 
   // Fetch visitors by employee name
@@ -170,67 +170,71 @@ function Employeedetails() {
             <div className="text-2xl font-bold mt-10 mb-2">Visitors</div>
             {visitors.length > 0 ? (
               <div>
-                {visitors.map((visitor) => (
-                  <div
-                    key={visitor._id}
-                    className="bg-gray-300 p-4 mt-4 rounded-md"
-                  >
-                    <div className="text-xl font-semibold">{visitor.name}</div>
-                    <hr />
-                    <div className="grid gap-3 xl:grid-cols-5 lg:grid-cols-4 sm:grid-cols-1 md:grid-cols-2">
-                      <div>
-                        <div className="text-gray-500 text-md font-semibold">
-                          Address
-                        </div>
-                        <div className="my-2 font-semibold">
-                          {visitor.address}
-                        </div>
+                {visitors
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                  .map((visitor) => (
+                    <div
+                      key={visitor._id}
+                      className="bg-gray-300 p-4 mt-4 rounded-md"
+                    >
+                      <div className="text-xl font-semibold">
+                        {visitor.name}
                       </div>
-                      <div>
-                        <div className="text-gray-500 text-md font-semibold">
-                          Purpose of visit
+                      <hr />
+                      <div className="grid gap-3 xl:grid-cols-5 lg:grid-cols-4 sm:grid-cols-1 md:grid-cols-2">
+                        <div>
+                          <div className="text-gray-500 text-md font-semibold">
+                            Address
+                          </div>
+                          <div className="my-2 font-semibold">
+                            {visitor.address}
+                          </div>
                         </div>
-                        <div className="my-2 font-semibold">
-                          {visitor.visitingpurpose}
+                        <div>
+                          <div className="text-gray-500 text-md font-semibold">
+                            Purpose of visit
+                          </div>
+                          <div className="my-2 font-semibold">
+                            {visitor.visitingpurpose}
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <div className="text-gray-500 text-md font-semibold">
-                          Phone number
+                        <div>
+                          <div className="text-gray-500 text-md font-semibold">
+                            Phone number
+                          </div>
+                          <div className="my-2 font-semibold">
+                            {visitor.mobile}
+                          </div>
                         </div>
-                        <div className="my-2 font-semibold">
-                          {visitor.mobile}
+                        <div>
+                          <div className="text-gray-500 text-md font-semibold">
+                            Checkin time
+                          </div>
+                          <div className="my-2 font-semibold">
+                            {!visitor.checkinTime ? (
+                              <div>-</div>
+                            ) : (
+                              <div>{formatDate(visitor.checkinTime)} </div>
+                            )}
+                            {/* {formatDate(visitor.checkinTime)} */}
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <div className="text-gray-500 text-md font-semibold">
-                          Checkin time
-                        </div>
-                        <div className="my-2 font-semibold">
-                          {!visitor.checkinTime ? (
-                            <div>-</div>
-                          ) : (
-                            <div>{formatDate(visitor.checkinTime)} </div>
-                          )}
-                          {/* {formatDate(visitor.checkinTime)} */}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-gray-500 text-md font-semibold">
-                          Checkout time
-                        </div>
-                        <div className="my-2 font-semibold">
-                          {!visitor.checkouttime ? (
-                            <div>-</div>
-                          ) : (
-                            <div>{formatDate(visitor.checkouttime)} </div>
-                          )}
-                          {/* {formatDate(visitor.checkouttime)} */}
+                        <div>
+                          <div className="text-gray-500 text-md font-semibold">
+                            Checkout time
+                          </div>
+                          <div className="my-2 font-semibold">
+                            {!visitor.checkouttime ? (
+                              <div>-</div>
+                            ) : (
+                              <div>{formatDate(visitor.checkouttime)} </div>
+                            )}
+                            {/* {formatDate(visitor.checkouttime)} */}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : (
               <div>No visitors found</div>

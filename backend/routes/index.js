@@ -17,6 +17,7 @@ const Getvisitorbyname = require("../controller/getvisitorslistbyname");
 const Getvisitorbyid = require("../controller/getvisitorbyid");
 const Updatevisitor = require("../controller/Editvisitor");
 const Deletevisitor = require("../controller/Deletevisitor");
+const Resetpasword = require("../controller/updatepassword");
 
 const router = express.Router();
 
@@ -57,5 +58,8 @@ router.put("/updatevisitor/:id", Updatevisitor);
 
 //Delete Visitor
 router.delete("/deletevisitor/:id", Deletevisitor);
+
+//Reset password
+router.put("/resetpassword/:id", Resetpasword);
 
 module.exports = router;
