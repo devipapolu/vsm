@@ -8,14 +8,10 @@ import { CgProfile } from "react-icons/cg";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slice";
 import { useCookies } from "react-cookie";
-import { Button, ButtonToolbar, Modal } from "rsuite";
+import { Button, Modal } from "rsuite";
 import Addvisitorpage from "../pages/Addvisitorpage";
-import { RiDashboardHorizontalFill } from "react-icons/ri";
-import MemberIcon from '@rsuite/icons/Member';
-import PlusRoundIcon from '@rsuite/icons/PlusRound';
 
-
-const Header = ({ Getvisitors, getload }) => {
+const Adminheader = ({ Getvisitors, getload }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -93,7 +89,7 @@ const Header = ({ Getvisitors, getload }) => {
         <header className="flex justify-between items-center">
           {/* Logo Section */}
           <div>
-            <Link to="/">
+            <Link to="/admindashboard">
               <img src={logo} alt="Company Logo" width="200px" height="200px" />
             </Link>
           </div>
@@ -102,50 +98,29 @@ const Header = ({ Getvisitors, getload }) => {
           <div className="flex justify-between items-center gap-4 sm:gap-6 lg:gap-10">
             {/* Navigation Links for Large Screens */}
             <div className="hidden lg:flex gap-10">
-              
-            <Link
-  to="/"
-  className={location.pathname === "/" ? "text-blue-500" : "text-gray-700"}
-  style={{ textDecoration: "none" }}
->
-  <div className="flex items-center gap-1">
-   <RiDashboardHorizontalFill/>
-    {/* Conditionally apply text color, font weight, and bottom border to the text */}
-    <span
-      className={
-        location.pathname === "/"
-          ? " text-blue-500 border-b-2   border-blue-500"
-          : "text-gray-700"
-      }
-    >
-      Dashboard
-    </span>
-  </div>
-</Link>
-
-
-<Link
-  to="/employees"
-  className={location.pathname === "/employees" ? "text-blue-500" : "text-gray-700"}
-  style={{ textDecoration: "none" }}
->
-  <div className="flex items-center gap-1">
-    <MemberIcon />
-    {/* Conditionally apply the text color, font weight, and border to the text */}
-    <span
-      className={location.pathname === "/employees" ? "text-blue-500  border-b-2 border-blue-500" : "text-gray-700"}
-    >
-      Employee
-    </span>
-  </div>
-</Link>
+              <Link
+                to="/admindashboard"
+                className={
+                  location.pathname === "/admindashboard" ? "active-link" : ""
+                }
+                style={{ textDecoration: "none" }}
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/adminemployees"
+                className={
+                  location.pathname === "/adminemployees" ? "active-link" : ""
+                }
+                style={{ textDecoration: "none" }}
+              >
+                Employees
+              </Link>
               <div
                 className="cursor-pointer"
                 onClick={handleOpen} // Open Add Visitor modal
               >
-  <ButtonToolbar>
- <Button appearance="subtle" className="flex  gap-2"><PlusRoundIcon/> <span >Add-visitor</span></Button></ButtonToolbar>
-
+                Add Visitor
               </div>
             </div>
 
@@ -198,45 +173,29 @@ const Header = ({ Getvisitors, getload }) => {
                 width={300}
               >
                 <div className="flex flex-col gap-4">
-                <Link
-  to="/"
-  className={location.pathname === "/" ? "text-blue-500" : "text-gray-700"}
-  style={{ textDecoration: "none" }}
->
-  <div className="flex items-center gap-2">
-    
-    {/* Conditionally apply text color, font weight, and bottom border to the text */}
-    <span
-      className={
-        location.pathname === "/"
-          ? " text-blue-500 border-b-2 border-blue-500"    
-          : "text-gray-700"
-      }
-    >
-      Dashboard
-    </span>
-  </div>
-</Link>
-<Link
-  to="/employees"
-  className={location.pathname === "/employees" ? "text-blue-500" : "text-gray-700"}
-  style={{ textDecoration: "none" }}
->
-  <div className="flex items-center gap-2">
-
-    {/* Conditionally apply the text color, font weight, and border to the text */}
-    <span
-      className={location.pathname === "/employees" ? "text-blue-500  border-b-2 border-blue-500" : "text-gray-700"}
-    >
-    Addemploye
-    </span>
-  </div>
-</Link>
+                  <Link
+                    to="/"
+                    className={location.pathname === "/" ? "active-link" : ""}
+                    style={{ textDecoration: "none" }}
+                    onClick={onCloseDrawer} // Close drawer after navigation
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/employees"
+                    className={
+                      location.pathname === "/employees" ? "active-link" : ""
+                    }
+                    style={{ textDecoration: "none" }}
+                    onClick={onCloseDrawer} // Close drawer after navigation
+                  >
+                    Employees
+                  </Link>
                   <div
                     className="cursor-pointer"
                     onClick={handleaddvisitor} // Open modal
                   >
-                    Addvisitor
+                    Add Visitor
                   </div>
                 </div>
               </Drawer>
@@ -282,4 +241,4 @@ const Header = ({ Getvisitors, getload }) => {
   );
 };
 
-export default Header;
+export default Adminheader;

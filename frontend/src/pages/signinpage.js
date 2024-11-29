@@ -105,8 +105,11 @@ const Signin = () => {
         });
 
         console.log("role", responseData.user.role);
-
-        navigate("/");
+        if (responseData.user.role === "GENERAL") {
+          navigate("/");
+        } else {
+          navigate("/admindashboard");
+        }
       } else {
         setGeneralError(responseData.message || "Login failed");
       }

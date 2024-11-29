@@ -6,6 +6,9 @@ import Addvisitorpage from "../pages/Addvisitorpage";
 import Signin from "../pages/signinpage";
 import Profilepage from "../pages/Profilepage";
 import Employeedetails from "../pages/Employeedetails";
+import Adminhome from "../Admindashboard/Adminhome";
+import AdminEmployees from "../Admindashboard/Adminemployees";
+import Adminemployeedetails from "../Admindashboard/Employeedetails";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +39,12 @@ const router = createBrowserRouter([
         path: "employedetails", // Fixed the typo here
         element: <Employeedetails />,
       },
+      {
+        path: "admindashboard",
+        element: <Adminhome />,
+      },
+      { path: "adminemployees", element: <AdminEmployees /> },
+      { path: "employeesdetails", element: <Adminemployeedetails /> },
     ],
   },
 ]);

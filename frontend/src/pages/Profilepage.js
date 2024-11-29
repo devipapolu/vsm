@@ -10,6 +10,7 @@ import { setUser } from "../redux/slice";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Adminheader from "../Admindashboard/Adminheader";
 
 // Custom Field Component for Formik
 const Field = ({ error, touched, ...rest }) => {
@@ -103,9 +104,19 @@ function Profilepage() {
     },
   });
 
+  const [role, setRole] = useState(true);
+
+  useEffect(() => {
+    if (user.role === "GENERAL") {
+      setRole(true);
+    } else {
+      setRole(false);
+    }
+  }, [user]);
+
   return (
     <>
-      <Header />
+      {role ? <Header /> : <Adminheader />}
       <div className="pt-28 pb-10">
         <div
           className="main_container flex justify-center items-center"
