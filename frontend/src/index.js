@@ -16,6 +16,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     {/* Wrap the entire app, including RouterProvider, with the Provider */}
+
     <Provider store={store}>
       <RouterProvider router={router} />
     </Provider>
