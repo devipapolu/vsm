@@ -40,6 +40,8 @@ const Home = () => {
 
   const [reloadVisitors, setReloadVisitors] = useState(false);
 
+  console.log("user", user);
+
   const handleUserAdded = () => {
     setReloadVisitors((prev) => !prev); // Toggle to trigger refresh
   };
@@ -230,6 +232,10 @@ const Home = () => {
       console.log("error", error);
     }
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className=" overflow-x-hidden">
