@@ -9,6 +9,7 @@ import Employeedetails from "../pages/Employeedetails";
 import Adminhome from "../Admindashboard/Adminhome";
 import AdminEmployees from "../Admindashboard/Adminemployees";
 import Adminemployeedetails from "../Admindashboard/Employeedetails";
+import Users from "../Admindashboard/Users";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,7 @@ const router = createBrowserRouter([
       },
       { path: "adminemployees", element: <AdminEmployees /> },
       { path: "employeesdetails", element: <Adminemployeedetails /> },
+      { path: "users", element: <Users /> },
     ],
   },
 ]);
