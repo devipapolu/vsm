@@ -142,11 +142,9 @@ const Header = ({ Getvisitors, getload }) => {
                 onClick={handleOpen} // Open Add Visitor modal
               >
   <ButtonToolbar>
- <Button appearance="subtle" className="flex  gap-2"><PlusRoundIcon/> <span >Add-visitor</span></Button></ButtonToolbar>
-
+ <Button  className="flex  gap-2  bg-[#c084fc] "><PlusRoundIcon/> <span >Add-visitor</span></Button></ButtonToolbar>
               </div>
             </div>
-
             {/* Profile Section */}
             <div className="cursor-pointer" ref={profileRef}>
               {/* Profile Icon */}
