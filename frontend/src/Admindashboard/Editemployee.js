@@ -15,7 +15,7 @@ const Editemployee = ({ handleClose, Getemployee, query }) => {
   });
 
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(true);
   const [initialdata, setInitialdata] = useState(null);
 
   // Fetch employee data by ID
@@ -150,6 +150,10 @@ const Editemployee = ({ handleClose, Getemployee, query }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
+
+    if (!validateForm) {
+      return;
+    }
 
     if (validateForm()) {
       try {

@@ -40,8 +40,6 @@ const Home = () => {
 
   const [reloadVisitors, setReloadVisitors] = useState(false);
 
-  console.log("user", user);
-
   const handleUserAdded = () => {
     setReloadVisitors((prev) => !prev); // Toggle to trigger refresh
   };

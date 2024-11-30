@@ -4,7 +4,6 @@ import {
   InputGroup,
   Input,
   Modal,
-  Button,
   ButtonToolbar,
   toaster,
   Placeholder,
@@ -67,7 +66,7 @@ const AdminEmployees = () => {
     } else {
       // If there is a search query, fetch filtered employees based on query
       const response = await axios.post(
-        "http://127.0.0.1:8090/api/searchemployee",
+        "http://127.0.0.1:8090/api/getuserbyname",
         {
           query: value,
         }
@@ -232,7 +231,7 @@ const AdminEmployees = () => {
                     <div className="relative h-48  p-7">
                       <img
                         alt="profile"
-                        src={employee.profilepic}
+                        src={employee.profile}
                         className="w-full h-full object-cover rounded-lg shadow-md"
                       />
                     </div>
