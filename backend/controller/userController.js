@@ -3,7 +3,17 @@ const userModel = require("../models/Usermodel");
 
 async function UserSignup(req, res) {
   try {
-    const { name, password, email, profilepic } = req.body;
+    const {
+      name,
+      password,
+      email,
+      profile,
+      mobile,
+      position,
+      role,
+      empid,
+      primaryid,
+    } = req.body;
 
     const user = await userModel.findOne({ email });
 
@@ -22,8 +32,12 @@ async function UserSignup(req, res) {
       name,
       email,
       password: hashedPassword,
-      profilepic,
-      role:"Admin"
+      profile,
+      role,
+      mobile,
+      position,
+      empid,
+      primaryid,
     };
 
     const saveUser = await userModel.create(newUser);
