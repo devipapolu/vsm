@@ -99,14 +99,15 @@ const AssignRoleToEmp = ({ handleClose, GetEmployee, query }) => {
     }
 
     try {
-      const response = await axios.post(
-        `http://127.0.0.1:8090/api/register`,
-        formData
-      );
-      if (response.data?.success) {
-        alert("Employee assigned successfully!");
-        handleClose();
-      }
+      // const response = await axios.post(
+      //   `http://127.0.0.1:8090/api/register`,
+      //   formData
+      // );
+      // if (response.data?.success) {
+      //   alert("Employee assigned successfully!");
+      //   GetEmployee();
+      //   handleClose();
+      // }
     } catch (error) {
       console.error("Error assigning employee:", error);
       alert("An error occurred. Please try again.");

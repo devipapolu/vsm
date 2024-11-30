@@ -4,7 +4,7 @@ const initialState = {
   name: "",
   email: "",
   role: "",
-  profilepic: "",
+  profile: "",
 };
 
 export const userslice = createSlice({
@@ -16,7 +16,7 @@ export const userslice = createSlice({
       state.name = action.payload.name;
       state.email = action.payload.email;
       state.role = action.payload.role;
-      state.profilepic = action.payload.profilepic;
+      state.profile = action.payload.profile;
     },
     setToken: (state, action) => {
       state.token = action.payload;

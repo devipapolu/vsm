@@ -25,7 +25,6 @@ const Editemployee = ({ handleClose, Getemployee, query }) => {
         const response = await axios.get(
           `http://127.0.0.1:8090/api/getempbyid/${query}`
         );
-
         // Extracting employee data from the response
         const employeeData = response.data?.data?.[0];
 
@@ -171,6 +170,14 @@ const Editemployee = ({ handleClose, Getemployee, query }) => {
             alert("employee updated successfully");
             Getemployee();
             handleClose();
+            const userresponse = await axios.put(
+              `http://127.0.0.1:8090/api/edituser/${query}`,
+              formData
+            );
+
+            if (userresponse.data.success) {
+              alert("user also updated");
+            }
           }
         }
       } catch (error) {

@@ -399,7 +399,7 @@ function Adminemployeedetails() {
           <Assignroletoemp
             query={query}
             handleClose={handleassignmodelclose}
-            Getemployee={GEtemployee}
+            GetEmployee={getuserbyid}
           />
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
