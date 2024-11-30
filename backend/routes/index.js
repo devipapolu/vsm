@@ -23,6 +23,8 @@ const Usersearchbyname = require("../controller/usersearchbyname");
 const Editemployee = require("../controller/EditEmployee");
 const DeleteEmployeebyid = require("../controller/DeleteEmployeebyid");
 const Getuserbyprimary = require("../controller/getuserbyid");
+const Edituser = require("../controller/Edituser");
+const Deleteuserbyid = require("../controller/deleteuserbyid");
 
 const router = express.Router();
 
@@ -76,10 +78,16 @@ router.post("/getuserbyname", Usersearchbyname);
 //Edit Employee
 router.put("/editemployee/:id", Editemployee);
 
+//Edit User
+router.put("/edituser/:id", Edituser);
+
 //Delete Employee by id
 router.delete("/deleteemployeebyid/:id", DeleteEmployeebyid);
 
 //Get user by primary
 router.get("/getuserbyprimary/:id", Getuserbyprimary);
+
+//delete user by id
+router.delete("/deleteuserbyid/:id", Deleteuserbyid);
 
 module.exports = router;
