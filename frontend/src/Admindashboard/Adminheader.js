@@ -116,6 +116,13 @@ const Adminheader = ({ Getvisitors, getload }) => {
               >
                 Employees
               </Link>
+              <Link
+                to="/users"
+                className={location.pathname === "/users" ? "active-link" : ""}
+                style={{ textDecoration: "none" }}
+              >
+                Users
+              </Link>
               <div
                 className="cursor-pointer"
                 onClick={handleOpen} // Open Add Visitor modal

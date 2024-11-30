@@ -1,12 +1,46 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { Image, Skeleton } from "antd";
+import Adminheader from "./Adminheader";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import RemindIcon from "@rsuite/icons/legacy/Remind";
+
+import SpeedDial from "@mui/material/SpeedDial";
+import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import SpeedDialAction from "@mui/material/SpeedDialAction";
+
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import EditIcon from "@mui/icons-material/Edit";
+import { Button, Modal } from "rsuite";
+import Editemployee from "./Editemployee";
+import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
+
+const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
+  position: "absolute",
+  "&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft": {
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
+  },
+  "&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight": {
+    top: theme.spacing(2),
+    left: theme.spacing(2),
+  },
+}));
 
 function Adminemployeedetails() {
+  const [name, setName] = React.useState("");
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query"); // Get the 'query' parameter from the URL
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const navigate = useNavigate();
+
+  const [deletemodal, setDeletemodal] = useState(false);
+  const handledeletemodalopen = () => setDeletemodal(true);
+  const handledeletemodalclose = () => setDeletemodal(false);
 
   const [empname, setEmpname] = useState("");
   const [visitors, setVisitors] = useState([]);
@@ -14,6 +48,24 @@ function Adminemployeedetails() {
   const [isModalOpen, setIsModalOpen] = useState(false); // To handle modal state
   const [loadingImage, setLoadingImage] = useState(true);
   const [selectedImage, setSelectedImage] = useState(""); // To store the image URL
+
+  const actions = [
+    {
+      icon: <AssignmentIndOutlinedIcon />,
+      name: "Assign Role",
+      onClick: handleOpen,
+    },
+    {
+      icon: <EditIcon />,
+      name: "Edit",
+      onClick: handleOpen,
+    },
+    {
+      icon: <DeleteOutlinedIcon />,
+      name: "Delete",
+      onClick: handledeletemodalopen,
+    },
+  ];
 
   // Fetch employee details by ID
   const GEtemployee = async () => {
@@ -24,7 +76,7 @@ function Adminemployeedetails() {
       const employeeData = response.data.data;
       setEmployee(employeeData);
       if (employeeData?.length > 0) {
-        setEmpname(employeeData[0].name); // Set employee name directly from first employee
+        setEmpname(employeeData[0].name);
       }
     } catch (error) {
       console.error("Error fetching employee:", error);
@@ -89,9 +141,28 @@ function Adminemployeedetails() {
   const handleImageLoad = () => {
     setLoadingImage(false); // Set loading to false when the image has loaded
   };
+
+  const [visitorname, setVisitorname] = useState("");
+
+  useEffect(() => {
+    employee.map((visitor) => setVisitorname(visitor.name));
+  }, [employee]);
+
+  const handleDeleteok = async () => {
+    const response = await axios.delete(
+      `http://127.0.0.1:8090/api/deleteemployeebyid/${query}`
+    );
+
+    if (response.data.success) {
+      alert("employee deleted");
+      navigate("/adminemployees");
+      handledeletemodalclose();
+    }
+  };
+
   return (
     <div>
-      <Header />
+      <Adminheader />
       <div className="pt-28">
         <div className="lg:px-20">
           <div className="p-3 rounded-md">
@@ -242,6 +313,74 @@ function Adminemployeedetails() {
           </div>
         </div>
       </div>
+      <Box
+        sx={{ transform: "translateZ(0px)", flexGrow: 1 }}
+        className="fixed-bottom"
+      >
+        <Box sx={{ position: "relative", mt: 3, height: 320 }}>
+          <StyledSpeedDial
+            ariaLabel="SpeedDial playground example"
+            icon={<SpeedDialIcon />}
+          >
+            {actions.map((action) => (
+              <SpeedDialAction
+                key={action.name}
+                icon={action.icon}
+                tooltipTitle={action.name}
+                onClick={action.onClick}
+              />
+            ))}
+          </StyledSpeedDial>
+        </Box>
+        <div>{name}</div>
+      </Box>
+
+      <Modal open={open} onClose={handleClose} className="bg-slate-400">
+        <Modal.Header>
+          <Modal.Title>
+            <div className="font-bold text-center">Edit Employe details</div>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Editemployee
+            query={query}
+            handleClose={handleClose}
+            Getemployee={GEtemployee}
+          />
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
+
+      {/*Delete Modal */}
+
+      <Modal
+        backdrop="static"
+        role="alertdialog"
+        open={deletemodal}
+        onClose={handledeletemodalclose}
+        size="xs"
+      >
+        <Modal.Body>
+          <RemindIcon style={{ color: "#ffb300", fontSize: 24 }} />
+          You are about to delete the Employee
+          <span className=" mx-1 font-semibold">{visitorname}</span>, are you
+          sure?
+        </Modal.Body>
+        <Modal.Footer className=" flex flex-row gap-3 justify-end">
+          <button
+            onClick={handledeletemodalclose}
+            className="  bg-gray-400 py-1 px-3 rounded-md text-white"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleDeleteok}
+            className="  bg-red-700 py-1 px-3 rounded-md text-white"
+          >
+            Delete
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

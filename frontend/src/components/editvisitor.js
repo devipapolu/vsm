@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 
 const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
   const [employees, setEmployees] = useState([]);
+  const [initialData, setInitialData] = useState(null);
   const [loading, setLoading] = useState(false); // Add a loading state
   const [formData, setFormdata] = useState({
     name: "",
@@ -38,14 +39,17 @@ const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
         ? response.data[0]
         : response.data;
 
-      setFormdata({
+      const visitordata = {
         name: data.name || "",
         mobile: data.mobile || "",
         address: data.address || "",
         visitingpurpose: data.visitingpurpose || "",
         visitingperson: data.visitingperson || "",
         photo: data.photo || "",
-      });
+      };
+
+      setFormdata(visitordata);
+      setInitialData(visitordata);
     } catch (error) {
       console.error("Error fetching visitor data:", error);
     }
@@ -142,6 +146,11 @@ const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
 
       if (responseData.message === "No changes were made.") {
         alert("No changes made");
+      }
+
+      if (JSON.stringify(formData) === JSON.stringify(initialData)) {
+        alert("No changes made");
+        return; // Stop form submission if no changes
       }
 
       if (responseData.message === "Visitor updated successfully.") {
