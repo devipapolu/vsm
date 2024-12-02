@@ -202,7 +202,6 @@ const Addemployee = ({ handleClose, Getemployees }) => {
             !errors.empid ? "mb-10 " : "mb-0 border-danger"
           } w-full px-3 py-2  border    rounded-md outline-none`}
           placeholder="Employee ID"
-          // required
         />
         {submitted && errors.empid && (
        <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.empid}</div>

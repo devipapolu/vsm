@@ -4,35 +4,56 @@ import {
   InputGroup,
   Input,
   Modal,
-  Button,
   ButtonToolbar,
   toaster,
   Placeholder,
+  Button,
 } from "rsuite";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 import Addemployee from "../pages/aadEmployee";
-import { Skeleton } from "antd";
+import { Dropdown, Skeleton } from "antd";
 import Adminheader from "./Adminheader";
 import Adduser from "./Adduser";
+import Userdetailsmodel from "./Userdetailsmodel";
+import { setUser } from "../redux/slice";
 
-const AdminEmployees = () => {
+const Adminusers = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
-  const [cookies] = useCookies(["token"]);
-  const navigatedetailspage = useNavigate();
+  const [cookies, setCookies] = useCookies(["token"]);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
   // Redirect to signin if token is missing or user is not logged in
   useEffect(() => {
+    // If no token, redirect to signin
     if (!cookies.token) {
       navigate("/signin");
       return; // Early return if token doesn't exist
     }
-  }, []);
-  // If no token, redirect to signin
+
+    // Fetch user data using token
+    const GetUser = async () => {
+      const response = await axios.post("http://127.0.0.1:8090/api/getuser", {
+        token: cookies.token,
+      });
+
+      const getuserData = response.data;
+
+      if (getuserData.data.message === "Invalid token") {
+        alert("Invalid token");
+        navigate("/signin");
+      }
+
+      dispatch(setUser(getuserData.data));
+    };
+
+    GetUser();
+  }, [cookies.token, navigate, dispatch]);
+  console.log("userfdghj", user);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -41,6 +62,19 @@ const AdminEmployees = () => {
   const [employees, setEmployees] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [userid, setUserid] = useState("");
+
+  const [viewmodel, setViewmodel] = useState(false);
+  const handleviewopen = (value) => {
+    setViewmodel(true);
+    setUserid(value);
+  };
+  const handleviewclose = () => setViewmodel(false);
+
+  const [deletemodal, setDeletemodal] = useState(false);
+  const handledeleteopen = (value) => setDeletemodal(true);
+
+  const handledeleteclose = () => setDeletemodal(false);
 
   // Fetch all employees from the backend
   const GetEmployees = async () => {
@@ -55,7 +89,7 @@ const AdminEmployees = () => {
     }
   };
 
-  console.log("employees", employees);
+  console.log("employees", user);
 
   // Handle search query change
   const handleQuerychange = async (value) => {
@@ -67,21 +101,15 @@ const AdminEmployees = () => {
     } else {
       // If there is a search query, fetch filtered employees based on query
       const response = await axios.post(
-        "http://127.0.0.1:8090/api/searchemployee",
+        "http://127.0.0.1:8090/api/getuserbyname",
         {
           query: value,
         }
       );
 
-      console.log("employee", response.data);
-
       setEmployees(response.data); // Update employees with search results
     }
   };
-
-  function opendetails(value) {
-    navigatedetailspage(`/employeesdetails/?query=${value}`);
-  }
 
   useEffect(() => {
     GetEmployees(); // Fetch all employees when component mounts
@@ -90,6 +118,50 @@ const AdminEmployees = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const items = [
+    {
+      label: "View",
+      key: "view",
+    },
+    {
+      label: "Delete",
+      key: "delete",
+    },
+  ];
+
+  const [username, setUsername] = useState("");
+
+  const handleMenuClick = (value, id, name) => {
+    // alert(id.key);
+    // alert(value);
+    // setClickedname(name);
+
+    if (id.key === "view") {
+      setViewmodel(true);
+      setUserid(value);
+      // setOpenmodal(true);
+      // setEditid(value);
+    } else {
+      setDeletemodal(true);
+      setUserid(value);
+      setUsername(name);
+    }
+  };
+
+  const handleUSerdelete = async () => {
+    const response = await axios.delete(
+      `http://127.0.0.1:8090/api/deleteuserbyid/${userid}`
+    );
+    if (response.data.success) {
+      alert("User deleted");
+      GetEmployees();
+      handledeleteclose();
+      if (user._id === userid) {
+        navigate("/signin");
+      }
+    }
+  };
 
   return (
     <div style={{}} className=" pt-28">
@@ -118,7 +190,7 @@ const AdminEmployees = () => {
             </div>
 
             {/* Add Employee Button (unchanged code) */}
-            <div className="  lg:w-1/6 md:w-1/5 sm:w-full flex justify-end lg:mt-0 lg:block sm:hidden md:block hidden ">
+            {/* <div className="  lg:w-1/6 md:w-1/5 sm:w-full flex justify-end lg:mt-0 lg:block sm:hidden md:block hidden ">
               <button
                 onClick={handleOpen}
                 className="bg-blue-500 text-white py-2 px-4 w-full rounded-md hover:bg-blue-600"
@@ -135,7 +207,7 @@ const AdminEmployees = () => {
               >
                 Add Employee
               </ButtonToolbar>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -225,20 +297,20 @@ const AdminEmployees = () => {
                 .map((employee) => (
                   <div
                     key={employee._id}
-                    onClick={() => opendetails(employee._id)}
-                    className="bg-slate-100 cursor-pointer rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl min-h-80"
+                    className="bg-slate-100  rounded-lg overflow-hidden transform transition-transform duration-300  min-h-80"
                   >
                     {/* Profile Image Section */}
                     <div className="relative h-48  p-7">
                       <img
                         alt="profile"
-                        src={employee.profilepic}
-                        className="w-full h-full object-cover rounded-lg shadow-md"
+                        src={employee.profile}
+                        className="w-full h-full object-cover rounded-lg shadow-md cursor-pointer"
+                        onClick={() => handleviewopen(employee._id)}
                       />
                     </div>
 
                     {/* Employee Info Section */}
-                    <div className="px-4 py-3 text-start space-y-2">
+                    <div className="px-4 pt-3 text-start space-y-2">
                       <h3 className="text-2xl font-semibold text-gray-800 truncate">
                         {employee.name}
                       </h3>
@@ -248,12 +320,19 @@ const AdminEmployees = () => {
                         {employee.empid}
                       </p>
                     </div>
-
-                    {/* Hovered Border */}
-                    <div className="p-3 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-100 opacity-0 hover:opacity-100 transition-opacity duration-300">
-                      <button className="text-white bg-indigo-600 py-1 px-3 rounded-md text-sm font-semibold transform hover:scale-105 transition duration-200">
-                        View Profile
-                      </button>
+                    <div className=" px-4 py-3 ">
+                      <Dropdown
+                        menu={{
+                          items,
+                          onClick: (e) =>
+                            handleMenuClick(employee._id, e, employee.name),
+                        }}
+                        trigger={["click"]}
+                      >
+                        <button className="mt-3 py-2 px-2 border text-black rounded-md">
+                          More..
+                        </button>
+                      </Dropdown>
                     </div>
                   </div>
                 ))}
@@ -270,9 +349,48 @@ const AdminEmployees = () => {
             </p>
           </div>
         )}
+
+        <Modal open={viewmodel} onClose={handleviewclose}>
+          <Modal.Header>
+            <Modal.Title className=" text-center"></Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Userdetailsmodel id={userid} />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={handleviewclose} appearance="subtle">
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/*Delete modal */}
+        <Modal open={deletemodal} onClose={handledeleteclose}>
+          <Modal.Header>
+            <Modal.Title>Delete User</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            You are about to delete the User{" "}
+            <div className=" inline-block font-bold">{username}</div> , are you
+            sure?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={handledeleteclose} appearance="subtle">
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              onClick={handleUSerdelete}
+              color="red"
+              appearance="primary"
+            >
+              Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );
 };
 
-export default AdminEmployees;
+export default Adminusers;

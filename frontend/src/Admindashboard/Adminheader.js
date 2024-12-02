@@ -5,11 +5,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Drawer } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
 import { useCookies } from "react-cookie";
 import { Button, Modal } from "rsuite";
 import Addvisitorpage from "../pages/Addvisitorpage";
+import axios from "axios";
 
 const Adminheader = ({ Getvisitors, getload }) => {
   const dispatch = useDispatch();
@@ -28,6 +29,8 @@ const Adminheader = ({ Getvisitors, getload }) => {
   const [openmodal, setOpenmodal] = useState(false);
   const handleOpen = () => setOpenmodal(true);
   const handleClose = () => setOpenmodal(false);
+  const user = useSelector((state) => state.user);
+  console.log("userfghjkjhgfdghjk", user);
 
   const handleToggle = () => {
     setIsOpen((prevState) => !prevState);
@@ -45,6 +48,35 @@ const Adminheader = ({ Getvisitors, getload }) => {
     );
     navigate("/signin");
   };
+
+  // const [userprofile, setuserprofile] = useState("");
+
+  // useEffect(() => {
+  //   // If no token, redirect to signin
+  //   if (!cookies.token) {
+  //     navigate("/signin");
+  //     return; // Early return if token doesn't exist
+  //   }
+
+  //   // Fetch user data using token
+  //   const GetUser = async () => {
+  //     const response = await axios.post("http://127.0.0.1:8090/api/getuser", {
+  //       token: cookies.token,
+  //     });
+
+  //     const getuserData = response.data;
+
+  //     if (getuserData.data.message === "Invalid token") {
+  //       alert("Invalid token");
+  //       navigate("/signin");
+  //     }
+
+  //     dispatch(setUser(getuserData.data));
+  //     setuserprofile(getuserData.data.profile);
+  //   };
+
+  //   GetUser();
+  // }, [cookies.token, navigate, dispatch]);
 
   // Close profile dropdown when on the profile page
   useEffect(() => {
@@ -134,8 +166,20 @@ const Adminheader = ({ Getvisitors, getload }) => {
             {/* Profile Section */}
             <div className="cursor-pointer" ref={profileRef}>
               {/* Profile Icon */}
-              <CgProfile size={30} onClick={handleToggle} />
-
+              {user.profile ? (
+                <img
+                  alt="profile"
+                  src={user.profile}
+                  width="40px"
+                  height="40px"
+                  className=" rounded-circle"
+                  onClick={handleToggle}
+                />
+              ) : (
+                <CgProfile size={30} onClick={handleToggle} />
+              )}
+              {/* <img alt="profile" src={userprofile} width={20} height={20} /> */}
+              {/* <CgProfile size={30} onClick={handleToggle} /> */}
               {/* Dropdown Menu */}
               {isOpen && (
                 <div
@@ -181,22 +225,37 @@ const Adminheader = ({ Getvisitors, getload }) => {
               >
                 <div className="flex flex-col gap-4">
                   <Link
-                    to="/"
-                    className={location.pathname === "/" ? "active-link" : ""}
+                    to="/admindashboard"
+                    className={
+                      location.pathname === "/admindashboard"
+                        ? "active-link"
+                        : ""
+                    }
                     style={{ textDecoration: "none" }}
                     onClick={onCloseDrawer} // Close drawer after navigation
                   >
                     Dashboard
                   </Link>
                   <Link
-                    to="/employees"
+                    to="/adminemployees"
                     className={
-                      location.pathname === "/employees" ? "active-link" : ""
+                      location.pathname === "/adminemployees"
+                        ? "active-link"
+                        : ""
                     }
                     style={{ textDecoration: "none" }}
                     onClick={onCloseDrawer} // Close drawer after navigation
                   >
                     Employees
+                  </Link>
+                  <Link
+                    to="/users"
+                    className={
+                      location.pathname === "/users" ? "active-link" : ""
+                    }
+                    style={{ textDecoration: "none" }}
+                  >
+                    Users
                   </Link>
                   <div
                     className="cursor-pointer"

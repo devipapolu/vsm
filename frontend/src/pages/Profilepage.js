@@ -128,7 +128,7 @@ function Profilepage() {
               <div className="flex flex-col gap-4">
                 <div className="flex flex-row gap-2">
                   <Image
-                    src={user.profilepic}
+                    src={user.profile}
                     alt="profile"
                     style={{ height: "150px", width: "170px" }}
                   />

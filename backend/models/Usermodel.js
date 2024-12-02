@@ -4,9 +4,13 @@ const userSchema = new mongoose.Schema(
   {
     name: String,
     email: String,
+    profile: String,
+    mobile: String,
+    empid: String,
+    position: String,
     password: String,
-    profilepic: String,
     role: String,
+    primaryid: String,
   },
   {
     timestamps: true,

@@ -16,6 +16,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Button, Modal } from "rsuite";
 import Editemployee from "./Editemployee";
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
+import Assignroletoemp from "./assignroletoemp";
 
 const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
   position: "absolute",
@@ -42,30 +43,48 @@ function Adminemployeedetails() {
   const handledeletemodalopen = () => setDeletemodal(true);
   const handledeletemodalclose = () => setDeletemodal(false);
 
+  const [assignmodel, setAssignmodel] = useState(false);
+  const handleassignmodelopen = () => setAssignmodel(true);
+  const handleassignmodelclose = () => setAssignmodel(false);
+
   const [empname, setEmpname] = useState("");
   const [visitors, setVisitors] = useState([]);
   const [employee, setEmployee] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // To handle modal state
   const [loadingImage, setLoadingImage] = useState(true);
   const [selectedImage, setSelectedImage] = useState(""); // To store the image URL
+  const [assign, setassign] = useState(true);
 
-  const actions = [
-    {
-      icon: <AssignmentIndOutlinedIcon />,
-      name: "Assign Role",
-      onClick: handleOpen,
-    },
-    {
-      icon: <EditIcon />,
-      name: "Edit",
-      onClick: handleOpen,
-    },
-    {
-      icon: <DeleteOutlinedIcon />,
-      name: "Delete",
-      onClick: handledeletemodalopen,
-    },
-  ];
+  const actions = assign
+    ? [
+        {
+          icon: <AssignmentIndOutlinedIcon />,
+          name: "Assign Role",
+          onClick: handleassignmodelopen,
+        },
+        {
+          icon: <EditIcon />,
+          name: "Edit",
+          onClick: handleOpen,
+        },
+        {
+          icon: <DeleteOutlinedIcon />,
+          name: "Delete",
+          onClick: handledeletemodalopen,
+        },
+      ]
+    : [
+        {
+          icon: <EditIcon />,
+          name: "Edit",
+          onClick: handleOpen,
+        },
+        {
+          icon: <DeleteOutlinedIcon />,
+          name: "Delete",
+          onClick: handledeletemodalopen,
+        },
+      ];
 
   // Fetch employee details by ID
   const GEtemployee = async () => {
@@ -87,6 +106,19 @@ function Adminemployeedetails() {
     window.scrollTo(0, 0);
   }, []);
 
+  //get user by primary id
+  const getuserbyid = async () => {
+    const response = await axios.get(
+      `http://127.0.0.1:8090/api/getuserbyprimary/${query}`
+    );
+
+    if (response.data?.success) {
+      setassign(false);
+    } else {
+      setassign(true);
+    }
+  };
+
   // Fetch visitors by employee name
   const getvisitors = async (empname) => {
     try {
@@ -104,6 +136,7 @@ function Adminemployeedetails() {
   // Use effect to call GEtemployee once the component mounts
   useEffect(() => {
     GEtemployee();
+    getuserbyid();
   }, [query]);
 
   // Use effect to call getvisitors when empname is set
@@ -346,6 +379,27 @@ function Adminemployeedetails() {
             query={query}
             handleClose={handleClose}
             Getemployee={GEtemployee}
+          />
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
+
+      {/*Assign Modal */}
+      <Modal
+        open={assignmodel}
+        onClose={handleassignmodelclose}
+        className="bg-slate-400"
+      >
+        <Modal.Header>
+          <Modal.Title>
+            <div className="font-bold text-center">Add role to Employee</div>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Assignroletoemp
+            query={query}
+            handleClose={handleassignmodelclose}
+            GetEmployee={getuserbyid}
           />
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
