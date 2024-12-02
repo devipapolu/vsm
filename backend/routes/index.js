@@ -25,6 +25,7 @@ const DeleteEmployeebyid = require("../controller/DeleteEmployeebyid");
 const Getuserbyprimary = require("../controller/getuserbyid");
 const Edituser = require("../controller/Edituser");
 const Deleteuserbyid = require("../controller/deleteuserbyid");
+const Deleteuserbyprimary = require("../controller/Deleteuserbyprimary");
 
 const router = express.Router();
 
@@ -89,5 +90,8 @@ router.get("/getuserbyprimary/:id", Getuserbyprimary);
 
 //delete user by id
 router.delete("/deleteuserbyid/:id", Deleteuserbyid);
+
+//Delete User by primary
+router.get("/deleteuserbyprimary/:id", Deleteuserbyprimary);
 
 module.exports = router;
