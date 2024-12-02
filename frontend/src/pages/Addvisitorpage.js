@@ -1,10 +1,19 @@
-import { Button, Select } from "antd";
+import { Button, message, Select, Spin } from "antd";
 import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Webcam from "react-webcam"; // Import react-webcam
+import { MdOutlineFlipCameraIos } from "react-icons/md";
+import { Loader } from "rsuite";
+import { LoadingOutlined } from "@ant-design/icons";
 
-const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
+const AddVisitorPage = ({
+  handleClose,
+  Getvisitors,
+  getload,
+  added,
+  username,
+}) => {
   const [employees, setEmployees] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [photo, setPhoto] = useState(null);
@@ -12,12 +21,18 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
   const webcamRef = useRef(null);
   const [error, setError] = useState(false);
   const location = useLocation();
+  const [swapcamera, setSwapcamera] = useState(true);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [saveloader, setSaveloader] = useState();
 
   useEffect(() => {
     if (location.pathname === "/employees") {
       setError(true);
     }
     if (location.pathname === "/profile") {
+      setError(true);
+    }
+    if (location.pathname === "/users") {
       setError(true);
     }
   }, [location.pathname]);
@@ -29,6 +44,7 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
     visitingpurpose: "",
     visitingperson: "",
     photo: "",
+    createdby: username,
   });
 
   const [errors, setErrors] = useState({
@@ -168,7 +184,6 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
       ...preve,
       visitingpurpose: value,
     }));
-
     if (submitted) {
       validateField("visitingpurpose", value);
     }
@@ -231,6 +246,7 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
     const valid = validateForm();
 
     if (valid) {
+      setSaveloader(true);
       const response = await axios.post(
         "http://127.0.0.1:8090/api/addvisitor",
         formData
@@ -239,8 +255,10 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
       const responseData = response.data;
 
       if (responseData.success) {
-        alert("visitor added successfully");
+        added();
+        // alert("visitor added successfully");
         handleClose();
+        setSaveloader(true);
         setFormdata({
           name: "",
           mobile: "",
@@ -263,6 +281,10 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
         alert("all fields are required");
       }
     }
+  };
+
+  const handlecameraswap = () => {
+    setSwapcamera(!swapcamera);
   };
 
   return (
@@ -386,12 +408,22 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
           ) : (
             <div>
               {/* Webcam */}
+              <div
+                className=" cursor-pointer  absolute z-50  ms-1"
+                style={{ cursor: "pointer" }}
+              >
+                <MdOutlineFlipCameraIos
+                  size={30}
+                  className=" cursor-pointer"
+                  onClick={handlecameraswap}
+                />
+              </div>
               <Webcam
                 audio={false}
                 screenshotFormat="image/jpeg"
                 width="100%"
                 videoConstraints={{
-                  facingMode: "environment", // Front camera
+                  facingMode: swapcamera ? "environment" : "user", // Front camera
                 }}
                 ref={webcamRef} // Attach ref to the webcam
               />
@@ -399,7 +431,7 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
               {/* Capture Button */}
               <button
                 type="button"
-                className="btn btn-success mt-2"
+                className="btn btn-success mt-2 top-0 right-0"
                 onClick={handleCapture}
               >
                 Capture Photo
@@ -420,9 +452,27 @@ const AddVisitorPage = ({ handleClose, Getvisitors, getload }) => {
           <div className=" btn btn-light w-full" onClick={handleClose}>
             cancel
           </div>
-          <button type="submit" className=" btn btn-primary w-full ">
-            Add Visitor
-          </button>
+          {saveloader ? (
+            <button
+              type="button"
+              disabled={true}
+              className=" btn btn-primary w-full flex items-center "
+            >
+              Add visitor
+              <Spin
+                indicator={
+                  <LoadingOutlined spin className=" ms-2 text-white" />
+                }
+              />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className=" btn btn-primary w-full flex items-center "
+            >
+              Add Visitor
+            </button>
+          )}
         </div>
       </form>
     </div>

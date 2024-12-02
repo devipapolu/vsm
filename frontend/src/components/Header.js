@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import logo from "./../images/new logo blue.png";
 import { BsList } from "react-icons/bs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Drawer } from "antd";
+import { Drawer, message } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
 import { useCookies } from "react-cookie";
 import { Button, ButtonToolbar, Modal } from "rsuite";
@@ -20,6 +20,9 @@ const Header = ({ Getvisitors, getload }) => {
   const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation(); // Get the current route location
+  const user = useSelector((state) => state.user);
+
+  console.log("userdfghj", user);
 
   const profileRef = useRef(null); // Ref for profile icon and dropdown
   const dropdownRef = useRef(null); // Ref for the dropdown menu
@@ -47,6 +50,14 @@ const Header = ({ Getvisitors, getload }) => {
       })
     );
     navigate("/signin");
+  };
+
+  const [messageApi, contextHolder] = message.useMessage();
+  const added = () => {
+    messageApi.open({
+      type: "success",
+      content: "Visitor Added successfully",
+    });
   };
 
   // Close profile dropdown when on the profile page
@@ -84,16 +95,27 @@ const Header = ({ Getvisitors, getload }) => {
   };
 
   return (
-    <div className="bg-neutral-300 fixed-top" style={{ zIndex: 1000 }}>
+    <div
+      className="bg-neutral-300 fixed-top"
+      style={{ zIndex: 1000, height: "100px" }}
+    >
+      {contextHolder}
       <div
-        className="lg:px-16 sm:px-6 px-5 pt-3 pb-1 mb-4"
+        className="lg:px-16 md:px-3  pt-3 pb-1 mb-4"
         style={{ position: "relative" }}
       >
-        <header className="flex justify-between items-center">
+        <header className="flex justify-between items-center mx-2">
           {/* Logo Section */}
-          <div>
+          <div className=" w-44 h-16">
             <Link to="/">
-              <img src={logo} alt="Company Logo" width="200px" height="200px" />
+              <img
+                src={logo}
+                alt="Company Logo"
+                className=" w-full h-full"
+                // width="200"
+                // height="200"
+                style={{ display: "block" }}
+              />{" "}
             </Link>
           </div>
 
@@ -150,14 +172,32 @@ const Header = ({ Getvisitors, getload }) => {
                 className="cursor-pointer"
                 onClick={handleOpen} // Open Add Visitor modal
               >
-  <ButtonToolbar>
- <Button  className="flex  gap-2  bg-[#c084fc] "><PlusRoundIcon/> <span >Add-visitor</span></Button></ButtonToolbar>
+                <button
+                  appearance="primary"
+                  color=""
+                  className="flex  gap-1 px-2 border py-1 items-center rounded-md bg-emerald-500   text-white "
+                >
+                  <PlusRoundIcon /> <span>Add-visitor</span>
+                </button>
               </div>
             </div>
             {/* Profile Section */}
             <div className="cursor-pointer" ref={profileRef}>
               {/* Profile Icon */}
-              <CgProfile size={30} onClick={handleToggle} />
+
+              {user.profile ? (
+                <img
+                  width="40px"
+                  height="40px"
+                  className=" rounded-circle"
+                  onClick={handleToggle}
+                  src={user.profile}
+                  alt="profile"
+                ></img>
+              ) : (
+                <CgProfile size={30} onClick={handleToggle} />
+              )}
+              {/* <CgProfile size={30} onClick={handleToggle} /> */}
 
               {/* Dropdown Menu */}
               {isOpen && (
@@ -243,7 +283,7 @@ const Header = ({ Getvisitors, getload }) => {
                             : "text-gray-700"
                         }
                       >
-                        Addemploye
+                        Employees
                       </span>
                     </div>
                   </Link>
@@ -251,7 +291,13 @@ const Header = ({ Getvisitors, getload }) => {
                     className="cursor-pointer"
                     onClick={handleaddvisitor} // Open modal
                   >
-                    Addvisitor
+                    <button
+                      appearance="primary"
+                      color=""
+                      className="flex  gap-1 px-2 border py-1 items-center rounded-md bg-emerald-500   text-white "
+                    >
+                      <PlusRoundIcon /> <span>Add-visitor</span>
+                    </button>
                   </div>
                 </div>
               </Drawer>
@@ -276,6 +322,7 @@ const Header = ({ Getvisitors, getload }) => {
               handleClose={handleClose}
               Getvisitors={Getvisitors}
               getload={getload}
+              added={added}
             />
           </Modal.Body>
         </Modal>

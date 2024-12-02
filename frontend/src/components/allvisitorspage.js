@@ -3,15 +3,14 @@ import { DatePicker, Input, InputGroup, Loader, Placeholder } from "rsuite";
 import SearchIcon from "@rsuite/icons/Search";
 import { Select } from "antd";
 import axios from "axios";
-import Download from "../../src/images/office.png"
+import Download from "../../src/images/office.png";
 
 import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
 import { useNavigate } from "react-router-dom";
 
-import * as XLSX from "xlsx";  // Import the xlsx library
-
+import * as XLSX from "xlsx"; // Import the xlsx library
 
 const Allvisitorspage = ({ getload }) => {
   const navigate = useNavigate();
@@ -170,6 +169,9 @@ const Allvisitorspage = ({ getload }) => {
       "Check-out Time": visitor.checkouttime
         ? formatDate(visitor.checkouttime)
         : "--",
+      "Visiting Person": visitor.visitingperson,
+      "Created at": visitor.createdAt,
+      "Created By": visitor.createdby,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -177,7 +179,10 @@ const Allvisitorspage = ({ getload }) => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Visitors");
 
     // Generate download link
-    const excelFile = XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+    const excelFile = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "binary",
+    });
     const buffer = new ArrayBuffer(excelFile.length);
     const view = new Uint8Array(buffer);
     for (let i = 0; i < excelFile.length; i++) {
@@ -193,14 +198,14 @@ const Allvisitorspage = ({ getload }) => {
 
   return (
     <div>
-      <div className="h-full w-full lg:px-28 md:px-2 sm:px-2 min-h-screen ">
+      <div className="h-full w-full lg:px-24 md:px-2 sm:px-2 min-h-screen ">
         <div className="px-2">
           <h1 className="font-bold text-2xl mt-4">Visitors history</h1>
         </div>
 
         {/* Search Input */}
-        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5">
-          <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-1 gap-2">
+        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5 px-2 ">
+          <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-1 gap-2 ">
             <div className="lg:w-4/6 md:w-full sm:w-full ">
               <InputGroup style={{ width: "100%", height: 40 }}>
                 <InputGroup.Addon className="bg-slate-100">
@@ -214,12 +219,12 @@ const Allvisitorspage = ({ getload }) => {
               </InputGroup>
             </div>
 
-            <div className="w-full gap-2 flex flex-row lg:w-2/6">
+            <div className="w-full gap-2 flex items-center flex-row lg:w-2/6">
               <DatePicker
                 format="yyyy-MM"
                 editable={false}
                 onChange={handleCalendar}
-                className=" h-10 w-full"
+                className=" w-full"
               />
               <Select
                 placeholder="Purpose"
@@ -228,15 +233,29 @@ const Allvisitorspage = ({ getload }) => {
                 options={visitingpurposeoptions}
                 className="h-10 w-full"
               />
+              <div className="">
+                <img
+                  src={Download}
+                  alt=" download"
+                  onClick={downloadExcel}
+                  width={"90px"}
+                  height={"90px"}
+                  className=" cursor-pointer"
+                ></img>
+              </div>
             </div>
           </div>
         </div>
         {/* Download Excel Button */}
-        <div className="mt-4">
-          
-         <img src={Download} alt=" download" onClick={downloadExcel} width={"50px"}height={"5s0px"}  ></img>
-          
-        </div>
+        {/* <div className="mt-4">
+          <img
+            src={Download}
+            alt=" download"
+            onClick={downloadExcel}
+            width={"50px"}
+            height={"5s0px"}
+          ></img>
+        </div> */}
 
         {/* Loading indicator */}
         {loading ? (
@@ -245,9 +264,9 @@ const Allvisitorspage = ({ getload }) => {
             <Loader center content="loading" />
           </div>
         ) : (
-          <div className="mt-3 pb-5 w-full overflow-x-auto">
+          <div className="mt-3 pb-5 w-full overflow-x-auto px-2">
             <table className="min-w-full table-auto border-collapse">
-              <thead className="bg-gray-100"> 
+              <thead className="bg-gray-100">
                 <tr>
                   <th className="px-4 py-2 text-left whitespace-nowrap">
                     Profile
@@ -269,6 +288,15 @@ const Allvisitorspage = ({ getload }) => {
                   </th>
                   <th className="px-4 py-2 text-left whitespace-nowrap">
                     Check-out Time
+                  </th>
+                  <th className="px-4 py-2 text-left whitespace-nowrap">
+                    Visiting person
+                  </th>
+                  <th className="px-4 py-2 text-left whitespace-nowrap">
+                    Created at
+                  </th>
+                  <th className="px-4 py-2 text-left whitespace-nowrap">
+                    Created By
                   </th>
                 </tr>
               </thead>
@@ -321,6 +349,15 @@ const Allvisitorspage = ({ getload }) => {
                             ? formatDate(employee.checkouttime)
                             : "--"}
                         </td>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          {employee.visitingperson}
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          {formatDate(employee.createdAt)}
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          {employee.createdby}
+                        </td>
                       </tr>
                     ))
                 ) : (
@@ -329,7 +366,7 @@ const Allvisitorspage = ({ getload }) => {
                       colSpan="7"
                       className="text-center px-4 py-2 text-lg text-gray-500"
                     >
-                      No employees found.
+                      No visitors found.
                     </td>
                   </tr>
                 )}

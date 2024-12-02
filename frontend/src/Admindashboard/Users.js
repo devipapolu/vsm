@@ -14,7 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 import Addemployee from "../pages/aadEmployee";
-import { Dropdown, Skeleton } from "antd";
+import { Dropdown, message, Skeleton } from "antd";
 import Adminheader from "./Adminheader";
 import Adduser from "./Adduser";
 import Userdetailsmodel from "./Userdetailsmodel";
@@ -58,6 +58,7 @@ const Adminusers = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [employees, setEmployees] = useState([]);
 
@@ -154,7 +155,11 @@ const Adminusers = () => {
       `http://127.0.0.1:8090/api/deleteuserbyid/${userid}`
     );
     if (response.data.success) {
-      alert("User deleted");
+      messageApi.open({
+        type: "success",
+        content: "User" + username + " deleted",
+      });
+      // alert("User deleted");
       GetEmployees();
       handledeleteclose();
       if (user._id === userid) {
@@ -164,18 +169,19 @@ const Adminusers = () => {
   };
 
   return (
-    <div style={{}} className=" pt-28">
+    <div style={{}} className="">
+      {contextHolder}
       <Adminheader />
-      <div className="lg:px-28 md:px-2 sm:px-2 w-full">
-        <div className="font-bold font-sans text-2xl mt-3 w-full">
-          Employees
+      <div className="lg:px-24 md:px-2 sm:px-2 w-full mt-28">
+        <div className="font-bold font-sans text-2xl mt-3 w-full px-2">
+          Users
         </div>
 
-        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5">
+        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5 px-2">
           {/* Search Input and Add Employee Button */}
           <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-10">
             {/* Search Input */}
-            <div className="lg:w-5/6 md:w-4/5 sm:w-full pr-4">
+            <div className="lg:w-5/6 md:w-4/5 sm:w-full">
               <InputGroup style={{ width: "100%", height: 40 }}>
                 <InputGroup.Addon className="bg-slate-100">
                   <SearchIcon />
@@ -329,7 +335,7 @@ const Adminusers = () => {
                         }}
                         trigger={["click"]}
                       >
-                        <button className="mt-3 py-2 px-2 border text-black rounded-md">
+                        <button className="mt-3 py-1 px-2 border bg-slate-300 text-black rounded-md">
                           More..
                         </button>
                       </Dropdown>

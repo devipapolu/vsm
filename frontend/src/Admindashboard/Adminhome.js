@@ -55,7 +55,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
-import { Button, Dropdown, Select, Skeleton } from "antd";
+import { Button, Dropdown, message, Select, Skeleton } from "antd";
 import Allvisitorspage from "../components/allvisitorspage";
 
 import Editvisitor from "../components/editvisitor";
@@ -75,6 +75,8 @@ const Adminhome = () => {
 
   const [openmodal, setOpenmodal] = useState(false);
   const [deletemodal, setDeletemodal] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+
   const handleOpen = () => setOpenmodal(true);
   const handleClose = () => {
     setOpenmodal(false);
@@ -217,14 +219,22 @@ const Adminhome = () => {
   // Check-in and check-out buttons
   const handleCheckin = async (value) => {
     await axios.put(`http://127.0.0.1:8090/api/chekin/${value}`);
-    alert("successfully checked in");
+    messageApi.open({
+      type: "success",
+      content: "visitor checked in successfully",
+    });
+    // alert("successfully checked in");
     handleUserAdded();
     getvisitors();
   };
 
   const handleCheckout = async (value) => {
     await axios.put(`http://127.0.0.1:8090/api/checkout/${value}`);
-    alert("successfully checked out");
+    messageApi.open({
+      type: "success",
+      content: "visitor checked out successfully",
+    });
+    // alert("successfully checked out");
     handleUserAdded();
     getvisitors();
   };
@@ -266,7 +276,11 @@ const Adminhome = () => {
       const responseData = response.data;
 
       if (responseData.success) {
-        alert("Visitor " + clickedname + " deleted");
+        messageApi.open({
+          type: "success",
+          content: "visitor" + clickedname + "deleted",
+        });
+        // alert("Visitor " + clickedname + " deleted");
         getvisitors();
         setDeletemodal(false);
         handleUserAdded();
@@ -284,8 +298,9 @@ const Adminhome = () => {
 
   return (
     <div className=" overflow-x-hidden">
+      {contextHolder}
       <Adminheader Getvisitors={getvisitors} getload={handleUserAdded} />
-      <div className="h-full w-full lg:px-28 md:px-2 sm:px-2 mb-16 pt-28">
+      <div className="h-full w-full lg:px-24 md:px-2 sm:px-2 mb-16 mt-28">
         {/* Header Section */}
         <div className="px-2">
           <h1 className="font-bold text-2xl">Visitors</h1>

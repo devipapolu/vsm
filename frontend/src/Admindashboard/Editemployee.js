@@ -1,9 +1,10 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Alert } from "antd";
+import { Alert, message, Spin } from "antd";
 import RemindOutlineIcon from "@rsuite/icons/RemindOutline";
+import { LoadingOutlined } from "@ant-design/icons";
 
-const Editemployee = ({ handleClose, Getemployee, query }) => {
+const Editemployee = ({ handleClose, Getemployee, query, updated }) => {
   const [filename, setFilename] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -17,6 +18,7 @@ const Editemployee = ({ handleClose, Getemployee, query }) => {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(true);
   const [initialdata, setInitialdata] = useState(null);
+  const [saveloader, setSaveloader] = useState(false);
 
   // Fetch employee data by ID
   useEffect(() => {
@@ -145,6 +147,8 @@ const Editemployee = ({ handleClose, Getemployee, query }) => {
     return isValid;
   };
 
+  const [messageApi, contextHolder] = message.useMessage();
+
   // Form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -155,6 +159,7 @@ const Editemployee = ({ handleClose, Getemployee, query }) => {
     }
 
     if (validateForm()) {
+      setSaveloader(true);
       try {
         const response = await axios.put(
           `http://127.0.0.1:8090/api/editemployee/${query}`,
@@ -164,20 +169,31 @@ const Editemployee = ({ handleClose, Getemployee, query }) => {
         const responseData = await response.data;
 
         if (JSON.stringify(formData) === JSON.stringify(initialdata)) {
-          alert("no changes made");
+          messageApi.open({
+            type: "warning",
+            content: "no changes made",
+          });
+
+          setSaveloader(false);
+          // alert("no changes made");
         } else {
           if (responseData.success) {
-            alert("employee updated successfully");
+            // messageApi.open({
+            //   type: "success",
+            //   content: "employee updated successfully",
+            // });
+            updated();
+            // alert("employee updated successfully");
             Getemployee();
             handleClose();
-            const userresponse = await axios.put(
+            await axios.put(
               `http://127.0.0.1:8090/api/edituser/${query}`,
               formData
             );
 
-            if (userresponse.data.success) {
-              alert("user also updated");
-            }
+            // if (userresponse.data.success) {
+            //   // alert("user also updated");
+            // }
           }
         }
       } catch (error) {
@@ -188,6 +204,7 @@ const Editemployee = ({ handleClose, Getemployee, query }) => {
 
   return (
     <div>
+      {contextHolder}
       <form onSubmit={handleSubmit}>
         {["empid", "name", "email", "mobile", "position"].map((field) => (
           <div key={field}>
@@ -258,12 +275,27 @@ const Editemployee = ({ handleClose, Getemployee, query }) => {
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded w-full"
-          >
-            Save
-          </button>
+          {saveloader ? (
+            <button
+              type="submit"
+              disabled={true}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded w-full"
+            >
+              Save
+              <Spin
+                indicator={
+                  <LoadingOutlined spin className=" text-white ms-2" />
+                }
+              />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded w-full"
+            >
+              Save
+            </button>
+          )}
         </div>
       </form>
     </div>
