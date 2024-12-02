@@ -10,11 +10,11 @@ import {
   Placeholder,
 } from "rsuite";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 import Addemployee from "../pages/aadEmployee";
-import { Skeleton } from "antd";
+import { message, Skeleton } from "antd";
 import Adminheader from "./Adminheader";
 
 const AdminEmployees = () => {
@@ -40,6 +40,23 @@ const AdminEmployees = () => {
   const [employees, setEmployees] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  const location = useLocation();
+  const [hasRefreshed, setHasRefreshed] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.refresh && !hasRefreshed) {
+      success();
+      setHasRefreshed(true);
+    }
+  }, [location.state, hasRefreshed]);
+
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "This is a success message",
+    });
+  };
 
   // Fetch all employees from the backend
   const GetEmployees = async () => {
@@ -91,20 +108,28 @@ const AdminEmployees = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  const [messageApi, contextHolder] = message.useMessage();
 
+  const updated = () => {
+    messageApi.open({
+      type: "success",
+      content: "employee updated successfully",
+    });
+  };
   return (
-    <div style={{}} className=" pt-28">
+    <div style={{}} className=" ">
+      {contextHolder}
       <Adminheader />
-      <div className="lg:px-28 md:px-2 sm:px-2 w-full">
-        <div className="font-bold font-sans text-2xl mt-3 w-full">
+      <div className="lg:px-24 md:px-2 sm:px-2 w-full mt-28">
+        <div className="font-bold font-sans text-2xl  w-full px-2">
           Employees
         </div>
 
-        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5">
+        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-2">
           {/* Search Input and Add Employee Button */}
-          <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-10">
+          <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-1 sm:mt-2 px-2">
             {/* Search Input */}
-            <div className="lg:w-5/6 md:w-4/5 sm:w-full pr-4">
+            <div className="lg:w-5/6 md:w-4/5 sm:w-full lg:pr-2  md:pr-3">
               <InputGroup style={{ width: "100%", height: 40 }}>
                 <InputGroup.Addon className="bg-slate-100">
                   <SearchIcon />
@@ -151,6 +176,7 @@ const AdminEmployees = () => {
             <Addemployee
               handleClose={handleClose}
               Getemployees={GetEmployees}
+              updated={updated}
             />
           </Modal.Body>
           <Modal.Footer></Modal.Footer>

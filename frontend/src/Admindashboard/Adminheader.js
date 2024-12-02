@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import logo from "./../images/new logo blue.png";
 import { BsList } from "react-icons/bs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Drawer } from "antd";
+import { Drawer, message } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +11,7 @@ import { useCookies } from "react-cookie";
 import { Button, Modal } from "rsuite";
 import Addvisitorpage from "../pages/Addvisitorpage";
 import axios from "axios";
+import PlusRoundIcon from "@rsuite/icons/PlusRound";
 
 const Adminheader = ({ Getvisitors, getload }) => {
   const dispatch = useDispatch();
@@ -85,6 +86,37 @@ const Adminheader = ({ Getvisitors, getload }) => {
     }
   }, [location.pathname]);
 
+  useEffect(() => {
+    // If no token, redirect to signin
+    if (!cookies.token) {
+      navigate("/signin");
+      return; // Early return if token doesn't exist
+    }
+
+    // Fetch user data using token
+    const GetUser = async () => {
+      const response = await axios.post("http://127.0.0.1:8090/api/getuser", {
+        token: cookies.token,
+      });
+
+      const getuserData = response.data;
+
+      if (getuserData.data.message === "Invalid token") {
+        alert("Invalid token");
+        navigate("/signin");
+      }
+
+      if (getuserData.data.role !== "Admin") {
+        navigate("/");
+      }
+
+      dispatch(setUser(getuserData.data));
+      console.log("userdata", getuserData.data.role);
+    };
+
+    GetUser();
+  }, [cookies.token, navigate, dispatch]);
+
   // Close dropdown when clicking outside the profile or dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -112,24 +144,44 @@ const Adminheader = ({ Getvisitors, getload }) => {
     onCloseDrawer();
   };
 
+  const [messageApi, contextHolder] = message.useMessage();
+  const added = () => {
+    messageApi.open({
+      type: "success",
+      content: "Visitor Added successfully",
+    });
+  };
+  console.log("usersss", user);
+
   return (
-    <div className="bg-neutral-300 fixed-top" style={{ zIndex: 1000 }}>
+    <div
+      className="bg-neutral-300 fixed-top"
+      style={{ zIndex: 1000, height: "100px" }}
+    >
+      {contextHolder}
       <div
-        className="lg:px-16 sm:px-6 px-5 pt-3 pb-1 mb-4"
+        className="lg:px-16 md:px-3 sm:px-2 sm:mx-2 pt-3 pb-1 mb-4"
         style={{ position: "relative" }}
       >
-        <header className="flex justify-between items-center">
+        <header className="flex justify-between items-center mx-2 ">
           {/* Logo Section */}
-          <div>
+          <div className=" w-44 h-16">
             <Link to="/admindashboard">
-              <img src={logo} alt="Company Logo" width="200px" height="200px" />
+              <img
+                src={logo}
+                alt="Company Logo"
+                className=" w-full h-full"
+                // width="200"
+                // height="200"
+                style={{ display: "block" }}
+              />{" "}
             </Link>
           </div>
 
           {/* Navigation & Profile */}
           <div className="flex justify-between items-center gap-4 sm:gap-6 lg:gap-10">
             {/* Navigation Links for Large Screens */}
-            <div className="hidden lg:flex gap-10">
+            <div className="hidden lg:flex gap-10 items-center">
               <Link
                 to="/admindashboard"
                 className={
@@ -159,7 +211,13 @@ const Adminheader = ({ Getvisitors, getload }) => {
                 className="cursor-pointer"
                 onClick={handleOpen} // Open Add Visitor modal
               >
-                Add Visitor
+                <button
+                  appearance="primary"
+                  color=""
+                  className="flex  gap-1 px-2 border py-1 items-center rounded-md bg-emerald-500   text-white "
+                >
+                  <PlusRoundIcon /> <span>Add-visitor</span>
+                </button>
               </div>
             </div>
 
@@ -192,7 +250,13 @@ const Adminheader = ({ Getvisitors, getload }) => {
                       setIsOpen(false); // Close the dropdown when "Profile" is clicked
                     }}
                   >
-                    <Link to="/profile">Profile</Link> {/* Link to Profile */}
+                    <Link
+                      to="/profile"
+                      className=" text-decoration-none text-dark"
+                    >
+                      Profile
+                    </Link>{" "}
+                    {/* Link to Profile */}
                   </div>
                   <div
                     className="cursor-pointer hover:bg-slate-300 px-2 py-1 rounded-md"
@@ -261,7 +325,13 @@ const Adminheader = ({ Getvisitors, getload }) => {
                     className="cursor-pointer"
                     onClick={handleaddvisitor} // Open modal
                   >
-                    Add Visitor
+                    <button
+                      appearance="primary"
+                      color=""
+                      className="flex  gap-1 px-2 border py-1 items-center rounded-md bg-emerald-500   text-white "
+                    >
+                      <PlusRoundIcon /> <span>Add-visitor</span>
+                    </button>
                   </div>
                 </div>
               </Drawer>
@@ -286,6 +356,8 @@ const Adminheader = ({ Getvisitors, getload }) => {
               handleClose={handleClose}
               Getvisitors={Getvisitors}
               getload={getload}
+              added={added}
+              username={user.name}
             />
           </Modal.Body>
         </Modal>

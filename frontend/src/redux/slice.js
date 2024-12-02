@@ -5,6 +5,7 @@ const initialState = {
   email: "",
   role: "",
   profile: "",
+  _id: "",
 };
 
 export const userslice = createSlice({

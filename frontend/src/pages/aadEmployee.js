@@ -1,9 +1,10 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Alert } from 'antd';
-import RemindOutlineIcon from '@rsuite/icons/RemindOutline';
+import { Alert, message, Spin } from "antd";
+import RemindOutlineIcon from "@rsuite/icons/RemindOutline";
+import { LoadingOutlined } from "@ant-design/icons";
 
-const Addemployee = ({ handleClose, Getemployees }) => {
+const Addemployee = ({ handleClose, Getemployees, updated }) => {
   const [filename, setFlename] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -13,6 +14,7 @@ const Addemployee = ({ handleClose, Getemployees }) => {
     profile: "",
     position: "",
   });
+  const [saveloader, setSaveloader] = useState(false);
 
   const [errors, setErrors] = useState({
     name: "",
@@ -24,6 +26,7 @@ const Addemployee = ({ handleClose, Getemployees }) => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -156,6 +159,7 @@ const Addemployee = ({ handleClose, Getemployees }) => {
     const valid = validateForm();
 
     if (valid) {
+      setSaveloader(true);
       try {
         const response = await axios.post(
           "http://127.0.0.1:8090/api/regemployee",
@@ -164,13 +168,20 @@ const Addemployee = ({ handleClose, Getemployees }) => {
         const responseData = response.data;
 
         if (responseData.message === "employee already exist") {
-          alert("Employee already exists.");
+          messageApi.open({
+            type: "warning",
+            content: "employee already exist",
+          });
         }
 
         if (responseData.success) {
           // alert("Employee created successfully!");
-          <> <Alert message="Success Tips" type="success" showIcon />
-    <br /></>
+          // messageApi.open({
+          //   type: "success",
+          //   content: "employee Created successfully",
+          // });
+          updated();
+
           setFormData({
             name: "",
             email: "",
@@ -180,6 +191,7 @@ const Addemployee = ({ handleClose, Getemployees }) => {
             position: "",
           });
           handleClose();
+          setSaveloader(false);
           Getemployees();
           // window.location.reload(); // Close modal after submission
         }
@@ -191,6 +203,7 @@ const Addemployee = ({ handleClose, Getemployees }) => {
 
   return (
     <div>
+      {contextHolder}
       <form onSubmit={handleSubmit}>
         <div className=" font-semibold">Employee Id:</div>
         <input
@@ -204,8 +217,10 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           placeholder="Employee ID"
         />
         {submitted && errors.empid && (
-       <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.empid}</div>
-          
+          <div className="text-red-500 mb-3 flex gap-2 items-center">
+            <RemindOutlineIcon className="w-3" />
+            {errors.empid}
+          </div>
         )}
 
         <div className=" font-semibold">Name:</div>
@@ -221,8 +236,10 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           // required
         />
         {submitted && errors.name && (
-        <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.name}</div>
-          
+          <div className="text-red-500 mb-3 flex gap-2 items-center">
+            <RemindOutlineIcon className="w-3" />
+            {errors.name}
+          </div>
         )}
         <div className=" font-semibold">Email:</div>
         <input
@@ -237,8 +254,10 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           // required
         />
         {submitted && errors.email && (
-       <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.email}</div>
-          
+          <div className="text-red-500 mb-3 flex gap-2 items-center">
+            <RemindOutlineIcon className="w-3" />
+            {errors.email}
+          </div>
         )}
 
         <div className=" font-semibold">Mobile:</div>
@@ -254,8 +273,10 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           // required
         />
         {submitted && errors.mobile && (
-         <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.mobile}</div>
-          
+          <div className="text-red-500 mb-3 flex gap-2 items-center">
+            <RemindOutlineIcon className="w-3" />
+            {errors.mobile}
+          </div>
         )}
 
         <div className=" font-semibold">Position:</div>
@@ -271,8 +292,10 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           // required
         />
         {submitted && errors.position && (
-        <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.position}</div>
-          
+          <div className="text-red-500 mb-3 flex gap-2 items-center">
+            <RemindOutlineIcon className="w-3" />
+            {errors.position}
+          </div>
         )}
 
         <div className=" font-semibold">Profile:</div>
@@ -300,8 +323,10 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           {filename ? `File Selected: ${filename.name}` : "Choose a file"}
         </label>
         {submitted && errors.profile && (
-          <div className="text-red-500 mb-3 flex gap-2 items-center"><RemindOutlineIcon className="w-3"/>{errors.profile}</div>
-
+          <div className="text-red-500 mb-3 flex gap-2 items-center">
+            <RemindOutlineIcon className="w-3" />
+            {errors.profile}
+          </div>
         )}
 
         <div className=" flex flex-row gap-3">
@@ -312,12 +337,28 @@ const Addemployee = ({ handleClose, Getemployees }) => {
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded w-full"
-          >
-            Add Employee
-          </button>
+
+          {saveloader ? (
+            <button
+              type="button"
+              disabled={true}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded w-full"
+            >
+              Add Employee
+              <Spin
+                indicator={
+                  <LoadingOutlined spin className=" ms-2 text-white" />
+                }
+              />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded w-full"
+            >
+              Add Employee
+            </button>
+          )}
         </div>
       </form>
     </div>

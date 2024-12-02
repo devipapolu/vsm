@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slice";
-import { Button, Dropdown, Select, Skeleton, Space } from "antd";
+import { Button, Dropdown, message, Select, Skeleton, Space } from "antd";
 import Allvisitorspage from "./allvisitorspage";
 import { DownOutlined } from "@ant-design/icons";
 import AddVisitorPage from "../pages/Addvisitorpage";
@@ -27,6 +27,7 @@ const Home = () => {
   const [visitors, setVisitors] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Track modal state
   const [loading, setLoading] = useState(true);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [openmodal, setOpenmodal] = useState(false);
   const [deletemodal, setDeletemodal] = useState(false);
@@ -41,7 +42,7 @@ const Home = () => {
   const [reloadVisitors, setReloadVisitors] = useState(false);
 
   const handleUserAdded = () => {
-    setReloadVisitors((prev) => !prev); // Toggle to trigger refresh
+    setReloadVisitors((prev) => !prev);
   };
 
   // Use effect to prevent body scroll when modal is open and to handle width adjustments
@@ -170,14 +171,22 @@ const Home = () => {
   // Check-in and check-out buttons
   const handleCheckin = async (value) => {
     await axios.put(`http://127.0.0.1:8090/api/chekin/${value}`);
-    alert("successfully checked in");
+    messageApi.open({
+      type: "success",
+      content: "visitor checked in successfully",
+    });
+    // alert("successfully checked in");
     handleUserAdded();
     getvisitors();
   };
 
   const handleCheckout = async (value) => {
     await axios.put(`http://127.0.0.1:8090/api/checkout/${value}`);
-    alert("successfully checked out");
+    messageApi.open({
+      type: "success",
+      content: "visitor checked out successfully",
+    });
+    // alert("successfully checked out");
     handleUserAdded();
     getvisitors();
   };
@@ -219,7 +228,10 @@ const Home = () => {
       const responseData = response.data;
 
       if (responseData.success) {
-        alert("Visitor " + clickedname + " deleted");
+        messageApi.open({
+          type: "success",
+          content: "visitor" + clickedname + " deleted",
+        });
         getvisitors();
         setDeletemodal(false);
         handleUserAdded();
@@ -237,8 +249,9 @@ const Home = () => {
 
   return (
     <div className=" overflow-x-hidden">
+      {contextHolder}
       <Header Getvisitors={getvisitors} getload={handleUserAdded} />
-      <div className="h-full w-full lg:px-28 md:px-2 sm:px-2 mb-16 pt-28">
+      <div className="h-full w-full lg:px-28 md:px-2 sm:px-2 mb-16 mt-28">
         {/* Header Section */}
         <div className="px-2">
           <h1 className="font-bold text-2xl">Visitors</h1>

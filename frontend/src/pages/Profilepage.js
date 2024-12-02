@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { Form, Button, Input } from "rsuite";
-import { Divider, Image } from "antd";
+import { Divider, Image, message, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 import axios from "axios";
@@ -11,6 +11,7 @@ import { setUser } from "../redux/slice";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Adminheader from "../Admindashboard/Adminheader";
+import { LoadingOutlined } from "@ant-design/icons";
 
 // Custom Field Component for Formik
 const Field = ({ error, touched, ...rest }) => {
@@ -52,6 +53,9 @@ function Profilepage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [messageApi, contextHolder] = message.useMessage();
+  const [saveloader, setSaveloader] = useState(false);
+
   const GetUser = async () => {
     const response = await axios.post("http://127.0.0.1:8090/api/getuser", {
       token: cookies.token,
@@ -79,6 +83,7 @@ function Profilepage() {
     },
     validationSchema,
     onSubmit: async (values) => {
+      setSaveloader(true);
       const { oldPassword, password, confirmpassword } = values;
 
       const response = await axios.put(
@@ -92,14 +97,33 @@ function Profilepage() {
       const responseData = response.data;
 
       if (!responseData.success) {
-        alert("Old password is incorrect");
+        messageApi.open({
+          type: "error",
+          content: "Old password is incorrect",
+        });
+        setSaveloader(false);
+        // alert("Old password is incorrect");
       } else if (oldPassword === password) {
-        alert(
-          "The new password cannot be the same as the old password. Please choose a different password"
-        );
+        messageApi.open({
+          type: "warning",
+          content:
+            "The new password cannot be the same as the old password. Please choose a different password",
+        });
+        setSaveloader(false);
+
+        // alert(
+        //   "The new password cannot be the same as the old password. Please choose a different password"
+        // );
       } else {
-        alert("Password updated");
-        navigate("/signin");
+        messageApi.open({
+          type: "success",
+          content: "Password updated",
+        });
+        setSaveloader(false);
+        GetUser();
+        formik.resetForm();
+        // alert("Password updated");
+        // navigate("/signin");
       }
     },
   });
@@ -114,10 +138,15 @@ function Profilepage() {
     }
   }, [user]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <>
+      {contextHolder}
       {role ? <Header /> : <Adminheader />}
-      <div className="pt-28 pb-10">
+      <div className="mt-28 pb-10">
         <div
           className="main_container flex justify-center items-center"
           style={{ width: "100%" }}
@@ -196,12 +225,30 @@ function Profilepage() {
                       />
                     </div>
 
-                    <button
-                      className=" bg-lime-600 text-white p-2 rounded-md hover:opacity-80"
-                      type="submit"
-                    >
-                      Change Password
-                    </button>
+                    {saveloader ? (
+                      <button
+                        className=" bg-lime-600 text-white p-2 rounded-md "
+                        type="button"
+                        disabled={true}
+                      >
+                        Change Password
+                        <Spin
+                          indicator={
+                            <LoadingOutlined
+                              spin
+                              className=" ms-2  text-white"
+                            />
+                          }
+                        />
+                      </button>
+                    ) : (
+                      <button
+                        className=" bg-lime-600 text-white p-2 rounded-md"
+                        type="submit"
+                      >
+                        Change Password
+                      </button>
+                    )}
                   </Form>
                 </div>
               </div>

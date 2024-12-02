@@ -93,18 +93,18 @@ const Emloyeespage = () => {
   }, []);
 
   return (
-    <div style={{}} className=" pt-28">
+    <div>
       <Header />
-      <div className="lg:px-28 md:px-2 sm:px-2 w-full">
-        <div className="font-bold font-sans text-2xl mt-3 w-full">
+      <div className="lg:px-24 md:px-2 sm:px-2 w-full mt-28">
+        <div className="font-bold font-sans text-2xl mt-3 w-full px-2">
           Employees
         </div>
 
-        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5">
+        <div className="lg:flex lg:flex-row lg:items-center lg:justify-between w-full mt-5 px-2">
           {/* Search Input and Add Employee Button */}
           <div className="flex flex-col md:flex-row lg:flex-row w-full mt-16 lg:mt-10">
             {/* Search Input */}
-            <div className="lg:w-5/6 md:w-4/5 sm:w-full pr-4">
+            <div className="lg:w-5/6 md:w-4/5 sm:w-full lg:pr-4 md:pr-3">
               <InputGroup style={{ width: "100%", height: 40 }}>
                 <InputGroup.Addon className="bg-slate-100">
                   <SearchIcon />
@@ -119,7 +119,7 @@ const Emloyeespage = () => {
             </div>
 
             {/* Add Employee Button (unchanged code) */}
-            <div className="  lg:w-1/6 md:w-1/5 sm:w-full flex justify-end lg:mt-0 lg:block sm:hidden md:block hidden ">
+            {/* <div className="  lg:w-1/6 md:w-1/5 sm:w-full flex justify-end lg:mt-0 lg:block sm:hidden md:block hidden ">
               <button
                 onClick={handleOpen}
                 className="bg-blue-500 text-white py-2 px-4 w-full rounded-md hover:bg-blue-600"
@@ -127,8 +127,8 @@ const Emloyeespage = () => {
               >
                 Add Employee
               </button>
-            </div>
-            <div className="lg:w-1/6 md:w-1/5 sm:w-full flex justify-start lg:mt-0 lg:hidden md:hidden sm:block ">
+            </div> */}
+            {/* <div className="lg:w-1/6 md:w-1/5 sm:w-full flex justify-start lg:mt-0 lg:hidden md:hidden sm:block ">
               <ButtonToolbar
                 onClick={handleOpen}
                 className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
@@ -136,7 +136,7 @@ const Emloyeespage = () => {
               >
                 Add Employee
               </ButtonToolbar>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -230,7 +230,7 @@ const Emloyeespage = () => {
                   <div
                     key={employee._id}
                     onClick={() => opendetails(employee._id)}
-                    className="bg-white cursor-pointer rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+                    className="bg-white cursor-pointer rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 lg:hover:scale-105 md:hover:scale-105 md:hover:shadow-2xl lg:hover:shadow-2xl"
                   >
                     {/* Profile Image Section */}
                     <div className="relative h-48 border-b-4 border-gray-100 p-2">

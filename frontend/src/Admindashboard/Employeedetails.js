@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { Image, Skeleton } from "antd";
+import { Image, message, Skeleton } from "antd";
 import Adminheader from "./Adminheader";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -54,6 +54,7 @@ function Adminemployeedetails() {
   const [loadingImage, setLoadingImage] = useState(true);
   const [selectedImage, setSelectedImage] = useState(""); // To store the image URL
   const [assign, setassign] = useState(true);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const actions = assign
     ? [
@@ -188,13 +189,29 @@ function Adminemployeedetails() {
 
     if (response.data.success) {
       alert("employee deleted");
-      navigate("/adminemployees");
+      navigate("/adminemployees", { state: { refresh: true } });
       handledeletemodalclose();
+      await axios.get(`http://127.0.0.1:8090/api/deleteuserbyprimary/${query}`);
     }
+  };
+
+  const assigned = () => {
+    messageApi.open({
+      type: "success",
+      content: "Role assigned successfully",
+    });
+  };
+
+  const updated = () => {
+    messageApi.open({
+      type: "success",
+      content: "employee updated successfully",
+    });
   };
 
   return (
     <div>
+      {contextHolder}
       <Adminheader />
       <div className="pt-28">
         <div className="lg:px-20">
@@ -371,7 +388,7 @@ function Adminemployeedetails() {
       <Modal open={open} onClose={handleClose} className="bg-slate-400">
         <Modal.Header>
           <Modal.Title>
-            <div className="font-bold text-center">Edit Employe details</div>
+            <div className="font-bold text-center">Edit Employee details</div>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -379,6 +396,7 @@ function Adminemployeedetails() {
             query={query}
             handleClose={handleClose}
             Getemployee={GEtemployee}
+            updated={updated}
           />
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
@@ -400,6 +418,7 @@ function Adminemployeedetails() {
             query={query}
             handleClose={handleassignmodelclose}
             GetEmployee={getuserbyid}
+            updated={assigned}
           />
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
