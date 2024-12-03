@@ -249,6 +249,12 @@ const Adminhome = () => {
       key: "delete",
     },
   ];
+  const updated = () => {
+    messageApi.open({
+      type: "success",
+      content: "Visitor updated successfully",
+    });
+  };
 
   const [editid, setEditid] = useState("");
   const [clickedname, setClickedname] = useState("");
@@ -550,6 +556,7 @@ const Adminhome = () => {
               handleClose={handleClose}
               getvisitors={getvisitors}
               getload={handleUserAdded}
+              updated={updated}
             />
           </Modal.Body>
           <Modal.Footer></Modal.Footer>

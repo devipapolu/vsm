@@ -1,8 +1,14 @@
-import { Button, Select } from "antd";
+import { Button, message, Select } from "antd";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 
-const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
+const Editvisitor = ({
+  handleClose,
+  editid,
+  getvisitors,
+  getload,
+  updated,
+}) => {
   const [employees, setEmployees] = useState([]);
   const [initialData, setInitialData] = useState(null);
   const [loading, setLoading] = useState(false); // Add a loading state
@@ -127,6 +133,8 @@ const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
     return isValid;
   };
 
+  const [messageApi, contextHolder] = message.useMessage();
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -145,16 +153,28 @@ const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
       const responseData = response.data;
 
       if (responseData.message === "No changes were made.") {
-        alert("No changes made");
+        messageApi.open({
+          type: "warning",
+          content: "No changes made",
+        });
+        // alert("No changes made");
       }
 
       if (JSON.stringify(formData) === JSON.stringify(initialData)) {
-        alert("No changes made");
+        messageApi.open({
+          type: "warning",
+          content: "No changes made",
+        });
         return; // Stop form submission if no changes
       }
 
       if (responseData.message === "Visitor updated successfully.") {
-        alert("Updated successfully");
+        updated();
+        // messageApi.open({
+        //   type: "success",
+        //   content: "Updated successfully",
+        // });
+        // alert("Updated successfully");
         getload();
         getvisitors();
       }
@@ -175,6 +195,7 @@ const Editvisitor = ({ handleClose, editid, getvisitors, getload }) => {
 
   return (
     <div>
+      {contextHolder}
       <form
         className="flex flex-col gap-3 lg:w-1/2 m-auto"
         onSubmit={handleSubmit}

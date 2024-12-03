@@ -196,6 +196,11 @@ const Allvisitorspage = ({ getload }) => {
     link.click();
   };
 
+  const disableFutureDates = (date) => {
+    const today = new Date();
+    return date > today; // Disable dates greater than today
+  };
+
   return (
     <div>
       <div className="h-full w-full lg:px-24 md:px-2 sm:px-2 min-h-screen ">
@@ -225,6 +230,7 @@ const Allvisitorspage = ({ getload }) => {
                 editable={false}
                 onChange={handleCalendar}
                 className=" w-full"
+                disabledDate={disableFutureDates}
               />
               <Select
                 placeholder="Purpose"
