@@ -1,0 +1,80 @@
+pipeline {
+    agent any
+
+    environment {
+        // Define environment variables
+        NODE_ENV = 'production'
+        PORT = '8080'  // You can adjust this according to your environment
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                // Clone the Git repository
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Install Node.js dependencies using npm
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Run tests (if you have them set up) using npm
+                    // For example, if you use Mocha or Jest, you can add the test command here
+                    sh 'npm test' // Adjust if necessary
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    // You can add build steps here if you have a production build process (e.g., for frontend)
+                    echo 'Building application...'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    // Deploy to your environment
+                    // For example, you could use SSH to deploy to a remote server
+                    echo 'Deploying application...'
+                    sh '''
+                    # Assuming you're deploying to a remote server via SSH
+                    # Make sure to replace with your actual server and deployment commands
+                    ssh user@your-server "cd /path/to/your/app && git pull && npm install && pm2 restart app"
+                    '''
+                }
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                // Clean up any temporary files if necessary
+                echo 'Cleaning up...'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up after build process...'
+        }
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}
