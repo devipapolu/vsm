@@ -1,0 +1,69 @@
+pipeline {
+    agent any
+
+    environment {
+        NODE_ENV = 'production'
+        PORT = '8080'  // Adjust this based on your environment
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    sh 'npm test'  // If you use a different test framework, adjust accordingly
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    echo 'Building application...'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    echo 'Deploying application...'
+                    sh '''
+                    ssh user@your-server "cd /path/to/your/app && git pull && npm install && pm2 restart app"
+                    '''
+                }
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                echo 'Cleaning up...'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up after build process...'
+        }
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}
