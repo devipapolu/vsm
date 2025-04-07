@@ -1,0 +1,154 @@
+Deploying backend 
+
+Option 1:
+ Deploy Your Node.js App with Docker
+Step 1: Install Docker on Your Server
+
+If Docker is not already installed on your server, install it by following these steps:
+
+Update package index:
+sudo apt update
+
+Install prerequisites:
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+
+Add Docker's official GPG key:
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+Set up the Docker stable repository:
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+Install Docker:
+sudo apt update
+sudo apt install docker-ce
+
+Start Docker:
+sudo systemctl start docker
+
+Enable Docker to start on boot:
+sudo systemctl enable docker
+
+Verify Docker installation:
+sudo docker --version
+
+Step 2: Build and Run Your Docker Container
+Since you have a Dockerfile, Docker can containerize your application for deployment.
+
+Build your Docker image:
+Navigate to your backend directory (where the Dockerfile is located) and build the Docker image:
+sudo docker build -t my-node-app .
+
+Run your Docker container:
+Once the image is built, you can run your container:
+sudo docker run -d -p 80:3000 --name my-node-container my-node-app
+This command tells Docker to run your container in detached mode (-d) and expose your application on port 80, assuming your app listens on port 3000 inside the container.
+
+Step 3: Access Your App
+Now, your Node.js app should be running on your server’s IP address on port 80. You can access it using your server’s public IP in the browser:
+
+arduino
+http://your_server_ip/
+
+Step 4: Manage Your Docker Container
+To stop the container:
+sudo docker stop my-node-container
+
+To restart the container:
+sudo docker restart my-node-container
+
+To remove the container:
+sudo docker rm my-node-container
+
+
+
+
+Option 2:
+ Deploy Without Docker (Using PM2)
+If you don't want to use Docker and prefer to run your Node.js app directly on the server, here's how you can deploy it using PM2 (a process manager for Node.js).
+
+Step 1: Install Node.js and Dependencies
+Install Node.js (if not already installed):
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt install -y nodejs
+
+Verify Node.js and NPM Installation:
+node -v
+npm -v
+
+Install Project Dependencies: In your backend directory (/home/bizgaze/vsm/backend), run:
+npm install
+
+Step 2: Install PM2
+Install PM2 globally:
+sudo npm install -g pm2
+
+Start Your App with PM2: In your backend directory, run:
+pm2 start index.js --name "vsm-backend"
+
+Save PM2 Process List (so it starts on reboot):
+pm2 save
+
+Set Up PM2 to Start on Boot:
+pm2 startup
+Follow the instructions printed by this command to enable PM2 to restart on server reboot.
+
+Step 3: Access Your App
+If your app is configured to listen on port 3000, you should be able to access it via:
+
+arduino
+http://your_server_ip:3000/
+
+
+Step 3: 
+Optional - Configure Nginx for Reverse Proxy
+If you want your application to be accessible via port 80 (the default HTTP port) instead of port 3000, you can use Nginx as a reverse proxy.
+
+Install Nginx:
+sudo apt install nginx
+Configure Nginx:
+
+Create a new configuration file for your application in /etc/nginx/sites-available/:
+sudo nano /etc/nginx/sites-available/vsm-backend
+Add this configuration:
+
+nginx
+Copy
+server {
+    listen 80;
+    server_name your_server_ip;
+
+    location / {
+        proxy_pass http://localhost:3000;  # Adjust if your app listens on another port
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+Enable the Site:
+sudo ln -s /etc/nginx/sites-available/vsm-backend /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+
+Step 5: Monitor and Maintain Your App
+Check PM2 logs:
+pm2 logs vsm-backend
+
+Monitor app performance:
+pm2 monit
+
+Restart app using PM2:
+pm2 restart vsm-backend
+
+
+Conclusion
+Docker Approach: Easy to deploy in an isolated environment and works across different systems with the same configuration.
+
+PM2 Approach: Directly runs the application on your server, giving you more control over the environment, but with a bit more maintenance.
+
+
+
+
+
+
+
+Deploying frontend in multiple ways 
