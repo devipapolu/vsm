@@ -1,0 +1,183 @@
+Option 1:
+ Deploying Frontend via Nginx on Your Server (Web Server)
+In this method, you will build your React app into static files and then serve them using Nginx, which is a high-performance web server.
+
+Step 1: Build Your React App
+Navigate to the frontend directory:
+cd /home/bizgaze/vsm/frontend
+
+Install dependencies (if you haven't already):
+npm install
+
+
+Build the app for production: This will create a build folder containing the optimized, static files:
+npm run build
+
+Step 2: Install and Configure Nginx
+Install Nginx: If you don’t have Nginx installed, run the following commands:
+sudo apt update
+sudo apt install nginx
+
+Configure Nginx to serve the React build files:
+
+Create a new configuration file for your app in /etc/nginx/sites-available/:
+sudo nano /etc/nginx/sites-available/vsm-frontend
+
+
+Add the following configuration:
+nginx
+
+server {
+    listen 80;
+    server_name your_server_ip;  # Use your server's IP address or domain name
+
+    location / {
+        root /home/bizgaze/vsm/frontend/build;  # Path to your built React app
+        try_files $uri /index.html;  # React Router handling
+        index index.html;
+    }
+}
+
+Enable the site by creating a symbolic link:
+sudo ln -s /etc/nginx/sites-available/vsm-frontend /etc/nginx/sites-enabled/
+
+Test and restart Nginx to apply the configuration:
+sudo nginx -t
+sudo systemctl restart nginx
+
+Step 3: Access the App
+Now, you should be able to access your frontend app at the IP address of your server:
+
+arduino
+http://your_server_ip
+If you want to use HTTPS, I highly recommend using Certbot (Let's Encrypt) to get a free SSL certificate.
+
+Step 4: Secure with SSL (Optional)
+Install Certbot (for SSL):
+sudo apt install certbot python3-certbot-nginx
+
+Run Certbot to obtain an SSL certificate for your domain:
+sudo certbot --nginx -d your_domain.com
+Follow the prompts to configure SSL and automatically redirect HTTP to HTTPS.
+
+
+Option 2:
+ Deploying Frontend on Platforms like Vercel, Netlify, or Docker
+These platforms provide seamless deployment with built-in Continuous Integration (CI), HTTPS, and CDN support. Let’s look at how you can deploy your frontend on Vercel, Netlify, and using Docker.
+
+A. Deploying to Vercel
+
+Vercel is one of the easiest platforms to deploy React apps.
+
+Sign up or log in to Vercel: Vercel
+
+Install Vercel CLI: If you prefer using the CLI, you can install it:
+npm install -g vercel
+
+Link your project to Vercel:
+In your frontend directory, run:
+
+vercel
+Vercel will prompt you to link your project to a Vercel account and automatically build and deploy your React app.
+
+Automatic deployment:
+
+Vercel will automatically detect your React project, install dependencies, build the project, and deploy it. It will give you a URL for accessing your app.
+
+Custom Domain:
+
+You can easily add a custom domain to your Vercel project through the Vercel dashboard.
+
+
+B. Deploying to Netlify
+Netlify is also one of the easiest platforms to deploy frontend applications and provides automatic builds from Git.
+
+Sign up or log in to Netlify: Netlify
+
+Push your code to GitHub/GitLab/Bitbucket: If your code isn't already on a version control platform, you should push it to GitHub (or another Git provider).
+
+Link GitHub repo to Netlify:
+
+In your Netlify dashboard, click New site from Git.
+
+Select GitHub and authorize Netlify to access your repositories.
+
+Select your project repository, and Netlify will automatically configure the build settings.
+
+
+Configure build settings:
+
+The default build command for React is:
+npm run build
+The publish directory should be the build folder:
+/build
+
+Deploy your site:
+
+After configuring the build settings, Netlify will automatically deploy your site. You’ll get a URL where your app will be hosted.
+
+Add a custom domain (optional):
+
+You can add a custom domain through the Netlify dashboard, and it will handle HTTPS for you.
+
+
+C. Deploying Using Docker
+If you want to deploy your app in a Docker container, you can follow these steps:
+
+Create a Dockerfile in the frontend directory: Here’s a basic Dockerfile for deploying a React app:
+
+dockerfile
+
+# Step 1: Build the app
+FROM node:16 as build
+
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm run build
+
+# Step 2: Serve the app with Nginx
+FROM nginx:alpine
+
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+Build your Docker image:
+
+In your frontend directory (where the Dockerfile is located), run:
+docker build -t my-react-app .
+Run the Docker container:
+
+Once the image is built, you can run the container:
+docker run -d -p 80:80 --name my-react-app-container my-react-app
+
+Access the app:
+
+Your React app should now be running at http://your_server_ip:80.
+
+Comparison of Options
+Nginx Deployment:
+
+Pros: Complete control over your server and deployment process. Good for production setups where you manage everything.
+
+Cons: Requires more manual setup and maintenance, including server security.
+
+Vercel / Netlify Deployment:
+
+Pros: Easiest to deploy with automatic builds, Continuous Integration, SSL certificates, and CDN. Free for most small projects.
+
+Cons: Less control over the infrastructure, but this is often fine for frontend apps.
+
+Docker Deployment:
+
+Pros: Great for containerization, easier to replicate environments, and deploy to various platforms (AWS, Google Cloud, DigitalOcean, etc.).
+
+Cons: Requires Docker knowledge and managing a containerized environment.
+
+Conclusion
+If you're looking for ease of use and quick deployment, Vercel or Netlify are great choices. They simplify the deployment process and handle things like SSL, custom domains, and CDN for you.
+
+If you prefer more control or are deploying in an existing server environment, deploying with Nginx or Docker would give you more flexibility.
+
+Let me know if you need further guidance on any specific step!
